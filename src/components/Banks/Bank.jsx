@@ -1,13 +1,70 @@
 import React from "react";
+import { useEffect, useState } from "react";
 import { Flex, Box, Card, Heading, Form, Button } from "rimble-ui";
 import BankData from "./BankData";
-import {
-  approvedClientList,
-  bankData,
-  pendingClientRequests,
-} from "../utils/userdata";
+import { approvedClientList, bankData, pendingClientRequests } from "../utils/userdata";
+import InitialiseWeb3 from "../utils/web3.js";
 
 const Bank = () => {
+  const [dmr, setDmr] = useState(null);
+  const [accounts, setAccounts] = useState(null);
+  const [bankDetails, setBankDetails] = useState(null);
+
+  useEffect(() => {
+    setup();
+  }, []);
+
+  const setup = async () => {
+    let [tempDmr, tempAcc] = await InitialiseWeb3();
+    // console.log(tempDmr, tempAcc);
+    setDmr(tempDmr);
+    setAccounts(tempAcc);
+    console.log(tempAcc);
+    // tempDmr.methods
+    //   .getBankById(1)
+    //   .call()
+    //   .then((res) => {
+    //     console.log(res);
+    //   });
+
+    // tempDmr.methods
+    //   .addBank(
+    //     "afsdfsda",
+    //     "fasdf",
+    //     "sdfsdf",
+    //     "0xF282c22814943651ee70437285c208e2E5570392"
+    //   )
+    //   .send({ from: "0xF282c22814943651ee70437285c208e2E5570392" })
+    //   .then((res) => {
+    //     console.log(res);
+    //   });
+  };
+
+  const getBankDetails = async () => {
+    if (dmr && accounts) {
+      dmr.methods
+        .getBankByAddress(accounts[0])
+        .call()
+        .then((res) => {
+          console.log(res);
+          const bankInfo = {
+            bName: res.bName,
+            bAddress: res.bAddress,
+            bWallet: res.addr,
+            label: "Bank Details",
+          };
+          setBankDetails(bankInfo);
+        });
+    }
+  };
+
+  useEffect(() => {
+    console.log(dmr, accounts);
+    if (dmr && accounts) {
+      getBankDetails();
+    }
+  }, [dmr, accounts]);
+
   return (
     <Flex minWidth={380}>
       <Box mx={"auto"} width={[1, 11 / 12, 10 / 12]}>
@@ -23,7 +80,7 @@ const Bank = () => {
         </Flex>
         <Card>
           <Heading as={"h2"}>Bank Data</Heading>
-          <BankData data={bankData} />
+          {bankDetails && <BankData data={[bankDetails]} />}
         </Card>
         <Card mt={20}>
           <Box ml={10} my={1}>
