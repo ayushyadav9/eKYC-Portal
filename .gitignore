@@ -5,6 +5,11 @@
 /.pnp
 .pnp.js
 
+/contracts
+truffle-config.js
+/test
+/migrations
+
 # testing
 /coverage
 

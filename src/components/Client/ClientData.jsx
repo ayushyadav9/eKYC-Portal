@@ -13,8 +13,8 @@ const ClientData = ({ userData }) => {
           </Box>
           <Box width={1}>
             <Text>Name: {item.name}</Text>
-            <Text>Address: {item.address}</Text>
             <Text>Gender: {item.gender}</Text>
+            <Text>Phone: {item.phone}</Text>
             <Text>DOB: {item.dob}</Text>
           </Box>
         </Flex>

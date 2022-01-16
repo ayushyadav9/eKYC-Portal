@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { Flex, Box, Card, Heading, Form, Button } from "rimble-ui";
 import BankData from "./BankData";
-import { approvedClientList, bankData, pendingClientRequests } from "../utils/userdata";
+import { approvedClientList, pendingClientRequests } from "../utils/userdata";
 import InitialiseWeb3 from "../utils/web3.js";
 
 const Bank = () => {
@@ -29,12 +29,12 @@ const Bank = () => {
 
     // tempDmr.methods
     //   .addBank(
-    //     "afsdfsda",
-    //     "fasdf",
-    //     "sdfsdf",
-    //     "0xF282c22814943651ee70437285c208e2E5570392"
+    //     "SBI",
+    //     "India",
+    //     "hasvcjcbashsjbcx",
+    //     "0x3d9ee5A2Fa27ca9414249C05c4fD86104126cff4"
     //   )
-    //   .send({ from: "0xF282c22814943651ee70437285c208e2E5570392" })
+    //   .send({ from: "0x3d9ee5A2Fa27ca9414249C05c4fD86104126cff4" })
     //   .then((res) => {
     //     console.log(res);
     //   });

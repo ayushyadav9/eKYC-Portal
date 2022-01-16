@@ -1,16 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Web3 from "web3";
 import { useHistory } from "react-router-dom";
-import { Flex, Box, Card, Heading, Form, Button } from "rimble-ui";
+import { Flex, Box, Card, Heading, Form, Button, Loader } from "rimble-ui";
 import ClientData from "./ClientData";
-
-import { userData, approvedBankList, pendingRequests } from "../utils/userdata";
+import {  approvedBankList, pendingRequests } from "../utils/userdata";
+import InitialiseWeb3 from "../utils/web3.js";
 
 const Client = () => {
   const history = useHistory();
-  const handleClickNewClient = (e) => {
-    e.preventDefault();
-    history.push("/client/update");
-  };
+  const [userData, setuserData] = useState(null)
+  const [Dmr, setDmr] = useState(null)
+  const [Accounts, setAccounts] = useState(null)
+
+  useEffect(() => {
+    setup();
+  }, []);
+
+  const setup = async () => {
+    let [tempDmr, tempAcc] = await InitialiseWeb3();
+    setDmr(tempDmr);
+    console.log(tempAcc)
+    setAccounts(tempAcc);
+    tempDmr.methods
+      .getCustomerDetails(
+        Web3.utils.toBN("63546599610137028445")
+      )
+      .call({ from: tempAcc[0] })
+      .then((res) => {
+        setuserData({
+          label:"User Details",
+          name:res._name,
+          gender: res._gender,
+          phone: res._phone,
+          dob: res._dob
+        })
+      });
+  
+  }
 
   return (
     <Flex minWidth={380}>
@@ -22,7 +48,7 @@ const Client = () => {
             </Heading>
           </Box>
           <Box my={"auto"}>
-            <Button mr={2} onClick={handleClickNewClient}>
+            <Button mr={2} onClick={()=>history.push("/client/update")}>
               Update Details
             </Button>
             <Button>Logout</Button>
@@ -30,7 +56,7 @@ const Client = () => {
         </Flex>
         <Card>
           <Heading as={"h2"}>Client data</Heading>
-          <ClientData userData={userData} />
+          {userData ? <ClientData userData={[userData]} />:<Loader color="white" />}
         </Card>
         <Card mt={20}>
           <Box ml={10} my={1}>
@@ -47,7 +73,7 @@ const Client = () => {
           <Flex mt={3} direction={"column"}>
             {approvedBankList.map((item, i) => {
               return (
-                <Flex mx={2}>
+                <Flex key={i} mx={2}>
                   <Heading
                     bg={"rgba(108, 160, 249, 0.2)"}
                     p={3}
@@ -70,7 +96,7 @@ const Client = () => {
             </Flex>
             {pendingRequests.map((data, i) => {
               return (
-                <Box bg={"rgba(108, 160, 249, 0.2)"} m={3} borderRadius={1}>
+                <Box key={i} bg={"rgba(108, 160, 249, 0.2)"} m={3} borderRadius={1}>
                   <Flex ml={4} mr={3} py={2} justifyContent="space-between">
                     <Heading as={"h3"}>{data.bankName}</Heading>
                     <Box mr={1} my={"auto"}>

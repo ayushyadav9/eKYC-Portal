@@ -13,7 +13,10 @@
     "react-scripts": "4.0.3",
     "rimble-ui": "^0.14.0",
     "styled-components": "^5.3.1",
-    "web-vitals": "^1.1.2"
+    "truffle": "^5.4.29",
+    "truffle-contract": "^4.0.31",
+    "web-vitals": "^1.1.2",
+    "web3": "^1.6.1"
   },
   "scripts": {
     "start": "react-scripts start",
