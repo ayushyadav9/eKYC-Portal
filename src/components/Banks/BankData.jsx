@@ -12,9 +12,9 @@ const BankData = ({ data }) => {
             </Heading>
           </Box>
           <Box width={1}>
-            <Text>Name: {item.name}</Text>
-            <Text>Address: {item.address}</Text>
-            <Text>Etherium Address: {item.eth}</Text>
+            <Text>Name: {item.bName}</Text>
+            <Text>Address: {item.bAddress}</Text>
+            <Text>Etherium Address: {item.bWallet}</Text>
           </Box>
         </Flex>
       ))}

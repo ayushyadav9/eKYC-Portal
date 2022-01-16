@@ -1,0 +1,1 @@
+export const DMR_ADDRESS = "0x2476dBE9c6CC0e24ce3b7Da31fb65E8e34Dc98C3";
