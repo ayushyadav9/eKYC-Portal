@@ -1,5 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { Flex, Box, Card, Heading, Form, Button } from "rimble-ui";
 import BankData from "./BankData";
 import { approvedClientList } from "../utils/userdata";
@@ -7,6 +8,9 @@ import InitialiseWeb3 from "../utils/web3.js";
 import Web3 from "web3";
 
 const Bank = () => {
+
+  const history = useHistory();
+  const [customerkycId, setCustomerkycId] = useState(null)
   const [dmr, setDmr] = useState(null);
   const [accounts, setAccounts] = useState(null);
   const [bankDetails, setBankDetails] = useState(null);
@@ -20,7 +24,6 @@ const Bank = () => {
 
   const setup = async () => {
     let [tempDmr, tempAcc] = await InitialiseWeb3();
-    // console.log(tempDmr, tempAcc);
     setDmr(tempDmr);
     setAccounts(tempAcc);
   };
@@ -114,6 +117,18 @@ const Bank = () => {
     }
   };
 
+  const addRequest = () => {
+    console.log(customerkycId)
+    if (dmr && accounts) {
+      dmr.methods
+        .addRequest(Web3.utils.toBN(customerkycId))
+        .call({from:accounts[0]})
+        .then((res) => {
+          console.log(res);
+        });
+    }
+  };
+
   useEffect(() => {
     console.log(dmr, accounts);
     if (dmr && accounts) {
@@ -194,6 +209,9 @@ const Bank = () => {
             </Heading>
           </Box>
           <Box my={"auto"}>
+            <Button mr={2} onClick={()=>history.push("/bank/update")}>
+              Add New Customer
+            </Button>
             <Button>Logout</Button>
           </Box>
         </Flex>
