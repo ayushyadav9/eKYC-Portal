@@ -1,11 +1,16 @@
 import React from "react";
 import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { Flex, Box, Card, Heading, Form, Button } from "rimble-ui";
 import BankData from "./BankData";
 import { approvedClientList, pendingClientRequests } from "../utils/userdata";
 import InitialiseWeb3 from "../utils/web3.js";
+import Web3 from "web3";
 
 const Bank = () => {
+
+  const history = useHistory();
+  const [customerkycId, setCustomerkycId] = useState(null)
   const [dmr, setDmr] = useState(null);
   const [accounts, setAccounts] = useState(null);
   const [bankDetails, setBankDetails] = useState(null);
@@ -16,28 +21,9 @@ const Bank = () => {
 
   const setup = async () => {
     let [tempDmr, tempAcc] = await InitialiseWeb3();
-    // console.log(tempDmr, tempAcc);
     setDmr(tempDmr);
     setAccounts(tempAcc);
     console.log(tempAcc);
-    // tempDmr.methods
-    //   .getBankById(1)
-    //   .call()
-    //   .then((res) => {
-    //     console.log(res);
-    //   });
-
-    // tempDmr.methods
-    //   .addBank(
-    //     "SBI",
-    //     "India",
-    //     "hasvcjcbashsjbcx",
-    //     "0x3d9ee5A2Fa27ca9414249C05c4fD86104126cff4"
-    //   )
-    //   .send({ from: "0x3d9ee5A2Fa27ca9414249C05c4fD86104126cff4" })
-    //   .then((res) => {
-    //     console.log(res);
-    //   });
   };
 
   const getBankDetails = async () => {
@@ -54,6 +40,18 @@ const Bank = () => {
             label: "Bank Details",
           };
           setBankDetails(bankInfo);
+        });
+    }
+  };
+
+  const addRequest = () => {
+    console.log(customerkycId)
+    if (dmr && accounts) {
+      dmr.methods
+        .addRequest(Web3.utils.toBN(customerkycId))
+        .call({from:accounts[0]})
+        .then((res) => {
+          console.log(res);
         });
     }
   };
@@ -75,6 +73,9 @@ const Bank = () => {
             </Heading>
           </Box>
           <Box my={"auto"}>
+            <Button mr={2} onClick={()=>history.push("/bank/update")}>
+              Add New Customer
+            </Button>
             <Button>Logout</Button>
           </Box>
         </Flex>
@@ -117,10 +118,10 @@ const Bank = () => {
           <Flex mx={5}>
             <Flex mr={3}>
               <Form.Field label="Client KYC ID" width={1}>
-                <Form.Input type="text" required />
+                <Form.Input value={customerkycId || ''} onChange={(e)=>{setCustomerkycId(e.target.value)}} type="text" required />
               </Form.Field>
             </Flex>
-            <Button mt={"28px"} type="submit">
+            <Button mt={"28px"} onClick={addRequest}>
               Send Request
             </Button>
           </Flex>
