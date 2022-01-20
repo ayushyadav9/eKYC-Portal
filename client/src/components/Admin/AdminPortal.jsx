@@ -49,12 +49,7 @@ const AdminPortal = () => {
             setBankDetails(bankInfo);
           });
       } catch (e) {
-        
-        console.log("SOme Thing WeNt Wrong .....");
-        // const data = e.data;
-        // const txHash = Object.keys(data)[0]; // TODO improve
-        // const reason = data[txHash].reason;    
-        // console.log(reason); // prints "This is error message"
+        console.log(e);
       }
     }
   };

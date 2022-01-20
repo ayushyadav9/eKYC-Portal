@@ -30,28 +30,8 @@ const UpdateData = () => {
 
   const setup = async () => {
     let [tempDmr, tempAcc] = await InitialiseWeb3();
-    // console.log(tempDmr, tempAcc);
     setDmr(tempDmr);
     setAccounts(tempAcc);
-    console.log(tempAcc);
-    // tempDmr.methods
-    //   .getBankById(1)
-    //   .call()
-    //   .then((res) => {
-    //     console.log(res);
-    //   });
-
-    // tempDmr.methods
-    //   .addBank(
-    //     "SBI",
-    //     "India",
-    //     "hasvcjcbashsjbcx",
-    //     "0x3d9ee5A2Fa27ca9414249C05c4fD86104126cff4"
-    //   )
-    //   .send({ from: "0x3d9ee5A2Fa27ca9414249C05c4fD86104126cff4" })
-    //   .then((res) => {
-    //     console.log(res);
-    //   });
   };
 
   const handelSubmit = (e) => {
@@ -71,7 +51,6 @@ const UpdateData = () => {
   };
 
   const addCustomer = async (panIPFS, aadharIPFS) => {
-    //console.log(formData);
     if (dmr && accounts) {
       fetch(`${baseURL}/register`, {
         method: "POST",
@@ -126,6 +105,19 @@ const UpdateData = () => {
   };
 
   return (
+    <>
+    <ToastContainer
+      theme="dark" 
+      position="top-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      />
     <Flex height={"100vh"}>
       <Box mx={"auto"} my={"auto"} width={[1, 9 / 15, 7 / 15]}>
         <Flex px={2} mx={"auto"} justifyContent="space-between">
@@ -269,6 +261,7 @@ const UpdateData = () => {
         </Card>
       </Box>
     </Flex>
+    </>
   );
 };
 

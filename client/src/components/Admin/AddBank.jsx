@@ -21,7 +21,6 @@ const AddBank = () => {
     e.preventDefault()
     setisLoading(true);
     addBank();
-    console.log("Bank Added Successfully.....",formData)
   }
 
   useEffect(() => {
@@ -30,7 +29,6 @@ const AddBank = () => {
 
   const setup = async () => {
     let [tempDmr, tempAcc] = await InitialiseWeb3();
-    // console.log(tempDmr, tempAcc);
     setDmr(tempDmr);
     setAccounts(tempAcc);
     console.log(tempAcc);
@@ -54,15 +52,10 @@ const AddBank = () => {
           setMessage("Account Added Successfully");
           setisLoading(false);
         });
-      } catch (e) {
-        
+      } catch (err) {
         setisLoading(false);
         setMessage("Failed");
-        console.log("SOme Thing WeNt Wrong .....");
-        // const data = e.data;
-        // const txHash = Object.keys(data)[0]; // TODO improve
-        // const reason = data[txHash].reason;    
-        // console.log(reason); // prints "This is error message"
+        console.log(err)
       }
     }
   }

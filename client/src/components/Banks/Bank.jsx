@@ -3,13 +3,10 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Flex, Box, Card, Heading, Form, Button } from "rimble-ui";
 import BankData from "./BankData";
-import { approvedClientList } from "../utils/userdata";
 import InitialiseWeb3 from "../utils/web3.js";
-import Web3 from "web3";
 
 const Bank = () => {
   const history = useHistory();
-  const [customerkycId, setCustomerkycId] = useState(null);
   const [dmr, setDmr] = useState(null);
   const [accounts, setAccounts] = useState(null);
   const [bankDetails, setBankDetails] = useState(null);
@@ -48,59 +45,6 @@ const Bank = () => {
     }
   };
 
-  const addCustomer = async (name, phone, address, gender, dob, PAN) => {
-    if (dmr && accounts) {
-      dmr.methods
-        .addCustomer(name, phone, address, dob, gender, PAN)
-        .send({ from: accounts[0] })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  };
-
-  const getKycIdFromPAN = async (PAN) => {
-    if (dmr && accounts) {
-      dmr.methods
-        .getKycIdFromPAN(PAN)
-        .call()
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  };
-
-  const getCustomerDetails = async (kycId, fWallet) => {
-    if (dmr && accounts) {
-      dmr.methods
-        .getCustomerDetails(kycId)
-        .call({ from: fWallet })
-        .then((res) => {
-          console.log(res);
-        });
-    }
-  };
-
-  const addAuth = async (kycId, bankAddress, fWallet) => {
-    if (dmr && accounts) {
-      dmr.methods
-        .addAuth(kycId, bankAddress)
-        .send({ from: fWallet })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  };
-
   const getBankData = async () => {
     if (dmr && accounts) {
       dmr.methods
@@ -117,24 +61,13 @@ const Bank = () => {
     }
   };
 
-  const addRequest = () => {
-    console.log(customerkycId);
-    if (dmr && accounts) {
-      dmr.methods
-        .addRequest(Web3.utils.toBN(customerkycId))
-        .call({ from: accounts[0] })
-        .then((res) => {
-          console.log(res);
-        });
-    }
-  };
 
   useEffect(() => {
-    console.log(dmr, accounts);
     if (dmr && accounts) {
       getBankDetails();
       getBankData();
     }
+    // eslint-disable-next-line
   }, [dmr, accounts]);
 
   const handleSendRequest = (e) => {
@@ -266,7 +199,7 @@ const Bank = () => {
         <Box mx={"auto"} mt={20}>
           <Card>
             <Heading as={"h2"}>Approved Requests</Heading>
-            {approvedClients.map((req, i) => {
+            {approvedClients.length>0 ?approvedClients.map((req, i) => {
               return (
                 <Box bg={"rgba(108, 160, 249, 0.2)"} m={3} borderRadius={1}>
                   <Flex justifyContent="space-between">
@@ -292,7 +225,8 @@ const Bank = () => {
                   </Flex>
                 </Box>
               );
-            })}
+            }):
+            <Heading as={"h3"} p={2} pl={4}>No approval requests</Heading>}
           </Card>
         </Box>
         <Card mt={20}></Card>

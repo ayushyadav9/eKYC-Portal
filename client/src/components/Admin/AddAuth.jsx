@@ -21,36 +21,30 @@ const AddAuth = () => {
 
   const setup = async () => {
     let [tempDmr, tempAcc] = await InitialiseWeb3();
-    //console.log(tempDmr, tempAcc);
     setDmr(tempDmr);
     setAccounts(tempAcc);
-    //console.log(tempAcc);
   }; 
 
   const handelSubmit = (e)=>{
     e.preventDefault()
-    //console.log(Web3.utils.toBN(kycId),bankWallet)    
     addAuth(); 
   }
 
   const addAuth = async () => {
     if (dmr && accounts) {
+      setisLoading(true)
       try {
         await dmr.methods
           .addAuth(Web3.utils.toBN(kycId),bankWallet)
           .send({from:accounts[0]})
           .then((res) => {  
+            setisLoading(false)
             console.log(res);
             setMessage("Status Success");          
           });
-      } catch (e) {        
+      } catch (e) {    
+        setisLoading(false)
         setMessage("Status Failed");  
-        console.log("SOme Thing WeNt Wrong .....");
-        console.log(e);
-        // const data = e.data;
-        // const txHash = Object.keys(data)[0]; // TODO improve
-        // const reason = data[txHash].reason;    
-        // console.log(reason); // prints "This is error message"
       }
     }
   };

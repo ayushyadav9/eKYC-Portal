@@ -32,7 +32,7 @@ const Home = () => {
         if(result.success){
           toast.success(result.message)
           localStorage.setItem("userToken",result.data.token)
-          history.push('/client')
+          history.push(`/${loginData.sender}`)
         }
         else{
           toast.info(result.message)

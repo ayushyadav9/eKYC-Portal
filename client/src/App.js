@@ -23,8 +23,8 @@ function App() {
         <Switch>
           <Route exact path="/" component={Home} />
           <ProtectedRoute exact path="/client" component={Client}/>
-          <Route exact path="/bank" component={Bank}/>
-          <Route exact path="/bank/update" component={UpdateData}/>
+          <ProtectedRoute exact path="/bank" component={Bank}/>
+          <ProtectedRoute exact path="/bank/update" component={UpdateData}/>
           <Route exact path="/admin" component={AdminPortal}/>
           <Route exact path="/admin/AddBank" component={AddBank}/>
           <Route exact path="/admin/AddAuth" component={AddAuth}/>
