@@ -1,5 +1,5 @@
 const Web3 = require('web3')
-const MyConc = require('../../build/contracts/KYC.json')
+const MyConc = require('../../../blockchain/build/contracts/KYC.json')
 const adminAddress = process.env.ADMIN_ADDRESS
 const adminKey = process.env.ADMIN_KEY
 

@@ -1,0 +1,24 @@
+{
+  "name": "truffle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ayushyadav9/eKYC-Portal.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ayushyadav9/eKYC-Portal/issues"
+  },
+  "homepage": "https://github.com/ayushyadav9/eKYC-Portal#readme",
+  "dependencies": {
+    "truffle": "^5.4.29",
+    "web3": "^1.7.0"
+  }
+}

@@ -19,7 +19,8 @@ const UpdateData = () => {
     phone:"",
     dob:"",
     gender:"",
-    PANno:""
+    PANno:"",
+    email:""
   })
  
   useEffect(() => {
@@ -31,22 +32,9 @@ const UpdateData = () => {
     // console.log(tempDmr, tempAcc);
     setDmr(tempDmr);
     setAccounts(tempAcc);
-    console.log(tempAcc);
     // tempDmr.methods
     //   .getBankById(1)
     //   .call()
-    //   .then((res) => {
-    //     console.log(res);
-    //   });
-
-    // tempDmr.methods
-    //   .addBank(
-    //     "SBI",
-    //     "India",
-    //     "hasvcjcbashsjbcx",
-    //     "0x3d9ee5A2Fa27ca9414249C05c4fD86104126cff4"
-    //   )
-    //   .send({ from: "0x3d9ee5A2Fa27ca9414249C05c4fD86104126cff4" })
     //   .then((res) => {
     //     console.log(res);
     //   });
@@ -64,12 +52,12 @@ const UpdateData = () => {
       }
       setMessage("Updated Successfuly!")
       setformData({...formData,"panIPFS":result[0].hash,"aadharIPFS":result[1].hash})
-      addCustomer();
+      addCustomer(result[0].hash,result[1].hash);
     })
   }
   
 
-  const addCustomer = async () => {
+  const addCustomer = async (adharIpfs,panIpfs) => {
     //console.log(formData);
     if (dmr && accounts) {
       dmr.methods
