@@ -4,3 +4,4 @@ logs/
 contracts
 migrations
 test
+truffle-config.js
