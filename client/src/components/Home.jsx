@@ -3,12 +3,13 @@ import {Flex, Box, Card, Heading, Form, Field, Radio, Button, Image, Loader} fro
 import { baseURL } from "../api";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useHistory } from "react-router-dom";
 
 
 const Home = () => {
   const [loginData, setloginData] = useState({email:"",password:"",sender:""})
   const [isLoading, setisLoading] = useState(false)
-
+  const history = useHistory()
   const handelLogin = (e)=>{
     e.preventDefault()
     if(loginData.sender==="bank" || loginData.sender==="client"){
@@ -31,6 +32,7 @@ const Home = () => {
         if(result.success){
           toast.success(result.message)
           localStorage.setItem("userToken",result.data.token)
+          history.push('/client')
         }
         else{
           toast.info(result.message)

@@ -1,45 +1,53 @@
 import React, { useEffect, useState } from "react";
-import Web3 from "web3";
 import { useHistory } from "react-router-dom";
 import { Flex, Box, Card, Heading, Form, Button, Loader } from "rimble-ui";
 import ClientData from "./ClientData";
-import {  approvedBankList, pendingRequests } from "../utils/userdata";
-import InitialiseWeb3 from "../utils/web3.js";
+import { baseURL } from "../../api";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Client = () => {
   const history = useHistory();
-  const [userData, setuserData] = useState(null)
-  const [Dmr, setDmr] = useState(null)
-  const [Accounts, setAccounts] = useState(null)
+  const [userData, setUserData] = useState(null)
 
   useEffect(() => {
-    setup();
+    fetch(`${baseURL}/getClientData`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("userToken")}`,
+      }
+    })
+    .then((res) => res.json())
+    .then((result,err) => {
+      if(err){
+        console.log(err)
+        toast.error('Something went wrong')
+        return
+      }
+      if(result.success){
+        toast.success(result.message)
+        setUserData(result.data)
+      }
+      console.log(result)
+    });
   }, []);
 
-  const setup = async () => {
-    let [tempDmr, tempAcc] = await InitialiseWeb3();
-    setDmr(tempDmr);
-    console.log(tempAcc)
-    setAccounts(tempAcc);
-    tempDmr.methods
-      .getCustomerDetails(
-        "KYC-g4adff"
-      )
-      .call({ from: tempAcc[0] })
-      .then((res) => {
-        console.log(res)
-        // setuserData({
-        //   label:"User Details",
-        //   name:res._name,
-        //   gender: res._gender,
-        //   phone: res._phone,
-        //   dob: res._dob
-        // })
-      });
-  
-  }
 
   return (
+    <>
+    <ToastContainer
+      theme="dark" 
+      position="top-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      />
     <Flex minWidth={380}>
       <Box mx={"auto"} width={[1, 10 / 12]}>
         <Flex px={2} mx={"auto"} justifyContent="space-between">
@@ -57,11 +65,11 @@ const Client = () => {
         </Flex>
         <Card>
           <Heading as={"h2"}>Client data</Heading>
-          {userData ? <ClientData userData={[userData]} />:<Loader color="white" />}
+          {userData ? <ClientData userData={userData} />:<Loader color="white" />}
         </Card>
         <Card mt={20}>
           <Box ml={10} my={1}>
-            {approvedBankList.length > 0 ? (
+            {userData && userData.approvedBanks.length > 0 ? (
               <Heading as={"h2"} my={"auto"}>
                 Your approved Banks:
               </Heading>
@@ -72,7 +80,7 @@ const Client = () => {
             )}
           </Box>
           <Flex mt={3} direction={"column"}>
-            {approvedBankList.map((item, i) => {
+            {userData && userData.approvedBanks.map((item, i) => {
               return (
                 <Flex key={i} mx={2}>
                   <Heading
@@ -90,12 +98,21 @@ const Client = () => {
           </Flex>
         </Card>
         <Card mt={20}>
-          <Heading as={"h2"}>Pending KYC Requests: </Heading>
+          {userData && userData.requestList.length > 0 ? (
+              <Heading as={"h2"}>
+               Pending KYC Requests: 
+              </Heading>
+            ) : (
+              <Heading as={"h2"}>
+                You have no pending KYC request
+              </Heading>
+            )}
+          {/* <Heading as={"h2"}>Pending KYC Requests: </Heading> */}
           <Form>
             <Flex mx={-3}>
               <Box width={1} px={3}></Box>
             </Flex>
-            {pendingRequests.map((data, i) => {
+            {userData && userData.requestList.map((data, i) => {
               return (
                 <Box key={i} bg={"rgba(108, 160, 249, 0.2)"} m={3} borderRadius={1}>
                   <Flex ml={4} mr={3} py={2} justifyContent="space-between">
@@ -117,6 +134,7 @@ const Client = () => {
         <Card mt={20}></Card>
       </Box>
     </Flex>
+    </>
   );
 };
 
