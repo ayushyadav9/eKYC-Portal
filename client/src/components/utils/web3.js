@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import {abi,networks} from "../../../../blockchain/build/contracts/KYC.json";
+import {abi,networks} from "./KYC.json";
 
 async function InitialiseWeb3() {
   await window.ethereum.enable();
