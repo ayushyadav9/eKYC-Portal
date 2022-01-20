@@ -1,6 +1,7 @@
 node_modules
 .env
 logs/
+build
 
 # dependencies
 /.pnp
@@ -11,7 +12,7 @@ logs/
 /coverage
 
 # production
-/build
+
 
 # misc
 .DS_Store
