@@ -23,17 +23,18 @@ const Client = () => {
     setAccounts(tempAcc);
     tempDmr.methods
       .getCustomerDetails(
-        Web3.utils.toBN("63546599610137028445")
+        "KYC-g4adff"
       )
       .call({ from: tempAcc[0] })
       .then((res) => {
-        setuserData({
-          label:"User Details",
-          name:res._name,
-          gender: res._gender,
-          phone: res._phone,
-          dob: res._dob
-        })
+        console.log(res)
+        // setuserData({
+        //   label:"User Details",
+        //   name:res._name,
+        //   gender: res._gender,
+        //   phone: res._phone,
+        //   dob: res._dob
+        // })
       });
   
   }
