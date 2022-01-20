@@ -294,6 +294,7 @@ contract KYC {
         Customers[_kycId].records.push(Records("aadhar", ipfs_aadhar, block.timestamp));
         Customers[_kycId].records.push(Records("pan", ipfs_pan, block.timestamp));
         isBankAuth[_kycId][msg.sender] = true;
+        Customers[_kycId].approvedBanks.push(msg.sender);
         Banks[msg.sender].approvals.push(_kycId);
     }
 
@@ -365,11 +366,22 @@ contract KYC {
         for(uint i = 0; i < array.length; i++){
             if(keccak256(abi.encodePacked(array[i])) == keccak256(abi.encodePacked(_kycId))){
                 array[i] = array[array.length - 1];
-                delete array[array.length - 1];
+                array.pop();
                 break;
             }
         }
     }
+    // function removeFromPendingList(string memory _kycId) public returns(string[] memory){
+    //     for(uint i = 0; i < Banks[msg.sender].approvals.length; i++){
+    //         if(keccak256(abi.encodePacked(Banks[msg.sender].approvals[i])) == keccak256(abi.encodePacked(_kycId))){
+    //             Banks[msg.sender].approvals[i] = Banks[msg.sender].approvals[Banks[msg.sender].approvals.length - 1];
+    //             Banks[msg.sender].approvals.pop();
+    //             delete Banks[msg.sender].approvals[Banks[msg.sender].approvals.length - 1];
+    //             break;
+    //         }
+    //     }
+    //     return Banks[msg.sender].approvals;
+    // }
 
     function addAuth(string memory _kycId, address _bankAddress) public onlyAdmin{
         require(isCustomer[_kycId], "Not a registered Customer!");

@@ -8,9 +8,8 @@ import InitialiseWeb3 from "../utils/web3.js";
 import Web3 from "web3";
 
 const Bank = () => {
-
   const history = useHistory();
-  const [customerkycId, setCustomerkycId] = useState(null)
+  const [customerkycId, setCustomerkycId] = useState(null);
   const [dmr, setDmr] = useState(null);
   const [accounts, setAccounts] = useState(null);
   const [bankDetails, setBankDetails] = useState(null);
@@ -108,6 +107,7 @@ const Bank = () => {
         .getBankData()
         .call({ from: accounts[0] })
         .then((res) => {
+          console.log(res);
           setPendingClientRequests(res.pendingCustomers);
           setApprovedClients(res.approvedCustomers);
         })
@@ -118,11 +118,11 @@ const Bank = () => {
   };
 
   const addRequest = () => {
-    console.log(customerkycId)
+    console.log(customerkycId);
     if (dmr && accounts) {
       dmr.methods
         .addRequest(Web3.utils.toBN(customerkycId))
-        .call({from:accounts[0]})
+        .call({ from: accounts[0] })
         .then((res) => {
           console.log(res);
         });
@@ -174,8 +174,9 @@ const Bank = () => {
   const kycVerdictHandler = (kycId, verdict) => {
     if (dmr && accounts) {
       if (verdict) {
+        console.log(kycId, verdict, bankDetails.bName, Date.now());
         dmr.methods
-          .approveKyc(kycId, bankDetails.name, "OK", Date.now())
+          .approveKyc(kycId, bankDetails.bName, "OK", Date.now())
           .send({ from: accounts[0] })
           .then((res) => {
             console.log(res);
@@ -209,7 +210,7 @@ const Bank = () => {
             </Heading>
           </Box>
           <Box my={"auto"}>
-            <Button mr={2} onClick={()=>history.push("/bank/update")}>
+            <Button mr={2} onClick={() => history.push("/bank/update")}>
               Add New Customer
             </Button>
             <Button>Logout</Button>
