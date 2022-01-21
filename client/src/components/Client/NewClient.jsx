@@ -14,6 +14,8 @@ const UpdateData = () => {
   const [isLoading, setisLoading] = useState(false);
   const [buffer, setbuffer] = useState([]);
   const [message, setMessage] = useState(null);
+  const [geo,setGeo] = useState("");
+
   const [formData, setformData] = useState({
     name: "",
     email: "",
@@ -32,6 +34,11 @@ const UpdateData = () => {
     let [tempDmr, tempAcc] = await InitialiseWeb3();
     setDmr(tempDmr);
     setAccounts(tempAcc);
+    console.log(tempAcc);
+
+    navigator.geolocation.getCurrentPosition(function(position) {
+        setGeo(position.coords.latitude+","+position.coords.longitude);
+    });
   };
 
   const handelSubmit = (e) => {
@@ -46,75 +53,40 @@ const UpdateData = () => {
       }
       setMessage("Updated Successfuly!");
       setformData({ ...formData, panIPFS: result[0].hash, aadharIPFS: result[1].hash });
-      addCustomer(result[0].hash, result[1].hash);
+      addCustomer(result[0].hash, result[1].hash,result[2].hash);
     });
   };
 
-  const addCustomer = async (panIPFS, aadharIPFS) => {
-    if (dmr && accounts) {
-      dmr.methods
-        .addCustomer(
-          formData.name,
-          formData.phone,
-          formData.address,
-          formData.gender,
-          formData.dob,
-          formData.PANno,
-          "p4",
-          panIPFS,
-          aadharIPFS
-        )
-        .send({ from: accounts[0] })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-      });
-    }
+  const addCustomer = async (panIPFS, aadharIPFS,selfieIPFS) => {
 
-    // if (dmr && accounts) {
-    //   fetch(`${baseURL}/register`, {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       email: formData.email,
-    //       sender: "client",
-    //     }),
-    //   })
-    //     .then((res) => res.json())
-    //     .then((result, err) => {
-    //       setisLoading(false);
-    //       if (err) {
-    //         console.log(err);
-    //         toast.error("Something went wrong");
-    //         return;
-    //       }
-    //       if (result.success) {
-    //         dmr.methods
-    //           .addCustomer(
-    //             formData.name,
-    //             formData.phone,
-    //             formData.address,
-    //             formData.gender,
-    //             formData.dob,
-    //             formData.PANno,
-    //             result.data.user.kycId,
-    //             panIPFS,
-    //             aadharIPFS
-    //           )
-    //           .send({ from: accounts[0] })
-    //           .then((res) => {
-    //             console.log(res);
-    //           })
-    //           .catch((err) => {
-    //             console.log(err);
-    //           });
-    //       }
-    //     });
-    // }
+    if (dmr && accounts) {
+        
+       let data = {...formData,panIPFS,aadharIPFS,selfieIPFS,geo};
+       console.log(data);
+
+        fetch(`${baseURL}/register`, {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+            data,    
+            sender: "client",
+            }),
+        })
+        .then((res) => res.json())
+        .then((result, err) => {
+          setisLoading(false);
+          if (err) {
+            console.log(err);
+            toast.error("Something went wrong");
+            return;
+          }
+          if (result.success) {
+            console.log(err);                          
+          }
+        });
+    }
   };
 
   const captureFile = (e) => {
@@ -127,19 +99,6 @@ const UpdateData = () => {
   };
 
   return (
-    <>
-    <ToastContainer
-      theme="dark" 
-      position="top-right"
-      autoClose={5000}
-      hideProgressBar={false}
-      newestOnTop={false}
-      closeOnClick
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-      />
     <Flex height={"100vh"}>
       <Box mx={"auto"} my={"auto"} width={[1, 9 / 15, 7 / 15]}>
         <Flex px={2} mx={"auto"} justifyContent="space-between">
@@ -262,6 +221,11 @@ const UpdateData = () => {
                     <Form.Input type="file" required width={1} onChange={captureFile} />
                   </Field>
                 </Box>
+                <Box width={1} px={3}>
+                  <Field label="Selfie" width={1}>
+                    <Form.Input type="file" required width={1} onChange={captureFile} />
+                  </Field>
+                </Box>
               </Flex>
             </Flex>
           </Card>
@@ -283,7 +247,6 @@ const UpdateData = () => {
         </Card>
       </Box>
     </Flex>
-    </>
   );
 };
 

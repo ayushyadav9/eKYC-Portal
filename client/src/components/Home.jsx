@@ -61,6 +61,20 @@ const Home = () => {
       />
     <Flex height={"100vh"}>
       <Box mx={"auto"} my={"auto"} width={[1, 1 / 2, 1 / 3, 1 / 4]}>
+
+        <Flex px={2} mx={"auto"} justifyContent="space-between">
+          <Box my={"auto"}>
+            <Heading as={"h1"} color="primary">
+              vKYC 
+            </Heading>
+          </Box>
+          <Box my={"auto"}>
+            <Button mr={2} onClick={()=>history.push("/client/NewClient")}>
+              New KYC customer
+            </Button>            
+          </Box>
+        </Flex>
+
         <Card>
           <Flex mx={"auto"} justifyContent="center">
             <Image alt="eKYC logo" width={"110px"} src="./customer.png" />
