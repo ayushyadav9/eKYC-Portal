@@ -31,6 +31,11 @@ contract KYC {
         _;
     }
     
+    modifier onlyBank(){
+        require(isBank[msg.sender],"Only Banks can do this action!");
+        _;
+    }
+
     function setOwner(address _owner) public onlyOwner returns(bool success){
         require(msg.sender!=_owner,"You are already the owner!");
         owner = _owner;
@@ -78,10 +83,6 @@ contract KYC {
     mapping(address => mapping(string=>uint)) bankRequestIndex; //index of customer_id in bank's request list
     mapping(string => mapping(address => uint)) customerRequestIndex; //index of bank address in customer's request list
     
-    modifier onlyBank(){
-        require(isBank[msg.sender],"Only Banks can do this action!");
-        _;
-    }
     
     function addRequest(string memory _kycId) public onlyBank{
         require(isCustomer[_kycId], "Not a registered Customer!");
@@ -214,28 +215,17 @@ contract KYC {
         Banks[_addr].addr = _addr;
         Banks[_addr].isApproved = true;
     } 
-    
-    // function getBankById(uint256 _id) public onlyAdmin view returns(uint256 id,string memory bName,string memory bAddress , string memory bContact ,address addr , bool isApproved){
-    //     uint256 i=0;
-    //     for(;i<BankList.length;i++){
-    //         if(Banks[BankList[i]].id==_id){
-    //             break;
-    //         }
-    //     }    
-    //     require(Banks[BankList[i]].id==_id,"Bank ID doesn't exists");
-    //     Bank memory tmp = Banks[BankList[i]];
-    //     return (tmp.id,tmp.bName,tmp.bAddress,tmp.bContact,tmp.addr,tmp.isApproved);
-    // }
-    
-    function getBankByAddress(address _address) public onlyAdmin view returns(uint256 id,string memory bName,string memory bAddress , string memory bContact ,address addr , bool isApproved){
+      
+    function getBankByAddress(address _address) public view onlyAuthority returns(string memory bName,string memory bAddress , string memory bContact ,address addr , bool isApproved){
         require(Banks[_address].isApproved,"Bank is not Approved or doesn't exist");
+        require(isAdmin[msg.sender] || msg.sender == _address, "Not Authorized to view data!");
         Bank memory tmp = Banks[_address];
-        return (tmp.id,tmp.bName,tmp.bAddress,tmp.bContact,tmp.addr,tmp.isApproved);
+        return (tmp.bName,tmp.bAddress,tmp.bContact,tmp.addr,tmp.isApproved);
     } 
     
     struct Records {
         string bName;
-        string ipfs;
+        string data;
         uint time;
     }
     
@@ -262,25 +252,28 @@ contract KYC {
     }
 
     string[] private CustomerList;
-    Customer[] public CustomerDetailList;
+    Customer[] public CustomerDetailList; //FOR DEBUGGING, COMMENT LATER
+
     mapping(string=>mapping(address=>bool)) isBankAuth; //userId -> address of Bank -> bool
-    mapping(string=>bool) isUserAuth; 
     mapping(string=>Customer) Customers;
     mapping(string=>bool) isCustomer;
     mapping(string=>bool) isCustomerFromPAN;
-    mapping(string=>string) PAN2KycId;
+    // mapping(string=>string) PAN2KycId;
     
-    function addRecord(string memory _kycId,string memory _bName, string memory _ipfs) public onlyBank{
-        require(isCustomer[_kycId],"User Not registered");
-        require(isBankAuth[_kycId][msg.sender],"No permission to add Records");
-        Customers[_kycId].records.push(Records(_bName, _ipfs, block.timestamp));        
-    }
+    /* ------USE UPDATE RECORD TO ADD INSTEAD------ */
+    // function addRecord(string memory _kycId,string memory _bName, string memory _ipfs) public onlyBank{
+    //     require(isCustomer[_kycId],"User Not registered");
+    //     require(isBankAuth[_kycId][msg.sender],"No permission to add Records");
+    //     Customers[_kycId].records.push(Records(_bName, _ipfs, block.timestamp));        
+    // }
     
-    function addCustomer(string memory _name, string memory _phone, string memory customerAddress, string memory _gender, string memory _dob, string memory _PAN, string memory _kycId, string memory ipfs_aadhar, string memory ipfs_pan) public onlyBank{
+    function addCustomer(string memory _name, string memory _phone, string memory customerAddress, string memory _gender, string memory _dob, string memory _PAN, string memory _kycId, string memory _geoLocation, string memory ipfs_selfie, string memory ipfs_aadhar, string memory ipfs_pan) public onlyAdmin{
         require(!isCustomer[_kycId],"Already Customer account exists");    
+        require(!isCustomerFromPAN[_PAN],"Already Customer account exists");    
 
         Customers[_kycId].kycId = _kycId;
         isCustomer[_kycId] = true;
+        isCustomerFromPAN[_PAN] = true;
         Customers[_kycId].name=_name;
         Customers[_kycId].phone=_phone;
         Customers[_kycId].customerAddress = customerAddress;
@@ -288,30 +281,32 @@ contract KYC {
         Customers[_kycId].dob=_dob;
         Customers[_kycId].PAN = _PAN;
         Customers[_kycId].kycStatus = false;
-        PAN2KycId[_PAN] = _kycId;
-        // currentUserCount += 1;
         CustomerDetailList.push(Customers[_kycId]);
         Customers[_kycId].records.push(Records("aadhar", ipfs_aadhar, block.timestamp));
         Customers[_kycId].records.push(Records("pan", ipfs_pan, block.timestamp));
+        Customers[_kycId].records.push(Records("selfie", ipfs_selfie, block.timestamp));
+        Customers[_kycId].records.push(Records("geoLocation", _geoLocation, block.timestamp));
         isBankAuth[_kycId][msg.sender] = true;
         Customers[_kycId].approvedBanks.push(msg.sender);
         Banks[msg.sender].approvals.push(_kycId);
+
+        // PAN2KycId[_PAN] = _kycId;
     }
 
-    function updateRecord(string memory _kycId, string memory record_type, string memory record_ipfs) public onlyAuthority {
+    function updateRecord(string memory _kycId, string memory record_type, string memory record_data) public onlyAuthority {
         require(isCustomer[_kycId],"No Customers found at the given address");
-        require(isAdmin[msg.sender] || isBankAuth[_kycId][msg.sender],"No permission to get Records");
+        require(isAdmin[msg.sender] || isBankAuth[_kycId][msg.sender],"No permission to edit Records");
 
         bool found = false;
         for(uint i = 0; i < Customers[_kycId].records.length; i++){
             if(keccak256(abi.encodePacked(Customers[_kycId].records[i].bName)) == keccak256(abi.encodePacked(record_type))){
-                Customers[_kycId].records[i].ipfs = record_ipfs;
+                Customers[_kycId].records[i].data = record_data;
                 Customers[_kycId].records[i].time = block.timestamp;
                 found = true;
                 break;
             }
             if(!found){
-                Customers[_kycId].records.push(Records(record_type, record_ipfs, block.timestamp));
+                Customers[_kycId].records.push(Records(record_type, record_data, block.timestamp));
             }
         }
     }

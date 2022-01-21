@@ -55,7 +55,6 @@ const Client = () => {
           return;
         }
         if (result.success) {
-          toast.success(result.message);
           setBankList(result.data);
         }
         console.log(result);
@@ -83,14 +82,11 @@ const Client = () => {
           return;
         }
         if (result.success) {
-          toast.success(result.message);
           updateBankLists();
         }
         console.log(result);
       });
   };
-
-  console.log(bankList);
   return (
     <>
       <ToastContainer
