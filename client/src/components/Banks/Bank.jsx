@@ -4,6 +4,8 @@ import { useHistory } from "react-router-dom";
 import { Flex, Box, Card, Heading, Form, Button } from "rimble-ui";
 import BankData from "./BankData";
 import InitialiseWeb3 from "../utils/web3.js";
+import Web3 from "web3";
+import VerifyClient from "./VerifyClient.jsx";
 
 const Bank = () => {
   const history = useHistory();
@@ -13,6 +15,7 @@ const Bank = () => {
   const [pendingClientRequests, setPendingClientRequests] = useState([]);
   const [approvedClients, setApprovedClients] = useState([]);
   const [customerKycId, setCustomerKycId] = useState("");
+  const [isPopupOpen,setIsPopupOpen] = useState(false);
 
   useEffect(() => {
     setup();
@@ -133,7 +136,17 @@ const Bank = () => {
     }
   };
 
+  const togglePopup = () => {
+    console.log("here");
+    setIsPopupOpen((prev)=>{
+      return !prev;
+    })    
+  };
+
   return (
+    <>
+    {isPopupOpen &&  <VerifyClient togglePopup={togglePopup}/>}
+
     <Flex minWidth={380}>
       <Box mx={"auto"} width={[1, 11 / 12, 10 / 12]}>
         <Flex px={2} mx={"auto"} justifyContent="space-between">
@@ -177,7 +190,7 @@ const Bank = () => {
             <Heading as={"h2"}>Pending Requests</Heading>
             {pendingClientRequests.map((req, i) => {
               return (
-                <Box bg={"rgba(108, 160, 249, 0.2)"} m={3} borderRadius={1}>
+                <Box bg={"rgba(108, 160, 249, 0.2)"} m={3} borderRadius={1} key={i}>
                   <Flex justifyContent="space-between">
                     <Heading as={"h3"} p={2} pl={4}>
                       {req.name}
@@ -208,6 +221,15 @@ const Bank = () => {
                         {req.name}
                       </Heading>
                       <Flex>
+
+                        <Button
+                            my={"auto"}
+                            mr={4}
+                            onClick={togglePopup}
+                          >
+                            <p>Verify</p>
+                        </Button>
+
                         <Button
                           my={"auto"}
                           mr={4}
@@ -237,6 +259,7 @@ const Bank = () => {
         <Card mt={20}></Card>
       </Box>
     </Flex>
+    </>
   );
 };
 

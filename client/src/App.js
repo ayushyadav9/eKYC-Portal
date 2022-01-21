@@ -9,6 +9,7 @@ import AdminPortal from "./components/Admin/AdminPortal";
 import AddBank from "./components/Admin/AddBank";
 import AddAuth from "./components/Admin/AddAuth";
 import ProtectedRoute from "./components/utils/Protected";
+import NewClient from "./components/Client/NewClient";
 
 const customTheme = {
   ...theme
@@ -28,6 +29,7 @@ function App() {
           <Route exact path="/admin" component={AdminPortal}/>
           <Route exact path="/admin/AddBank" component={AddBank}/>
           <Route exact path="/admin/AddAuth" component={AddAuth}/>
+          <Route exact path="/client/NewClient" component={NewClient}/>          
         </Switch>
       </Router>
     </ThemeProvider>
