@@ -252,7 +252,7 @@ contract KYC {
     }
 
     string[] private CustomerList;
-    Customer[] public CustomerDetailList; //FOR DEBUGGING, COMMENT LATER
+    // Customer[] public CustomerDetailList; //FOR DEBUGGING, COMMENT LATER
 
     mapping(string=>mapping(address=>bool)) isBankAuth; //userId -> address of Bank -> bool
     mapping(string=>Customer) Customers;
@@ -281,14 +281,14 @@ contract KYC {
         Customers[_kycId].dob=_dob;
         Customers[_kycId].PAN = _PAN;
         Customers[_kycId].kycStatus = false;
-        CustomerDetailList.push(Customers[_kycId]);
         Customers[_kycId].records.push(Records("aadhar", ipfs_aadhar, block.timestamp));
         Customers[_kycId].records.push(Records("pan", ipfs_pan, block.timestamp));
         Customers[_kycId].records.push(Records("selfie", ipfs_selfie, block.timestamp));
         Customers[_kycId].records.push(Records("geoLocation", _geoLocation, block.timestamp));
-        isBankAuth[_kycId][msg.sender] = true;
-        Customers[_kycId].approvedBanks.push(msg.sender);
-        Banks[msg.sender].approvals.push(_kycId);
+        // CustomerDetailList.push(Customers[_kycId]);
+        // isBankAuth[_kycId][msg.sender] = true;
+        // Customers[_kycId].approvedBanks.push(msg.sender);
+        // Banks[msg.sender].approvals.push(_kycId);
 
         // PAN2KycId[_PAN] = _kycId;
     }
