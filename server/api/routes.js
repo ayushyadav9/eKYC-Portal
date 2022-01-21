@@ -13,11 +13,7 @@ const {
 router.get("/", home);
 router.post("/register", register);
 router.post("/login", login);
-router.get(
-  "/getClientData",
-  passport.authenticate("jwt", { session: false }),
-  getClientData
-);
+router.get("/getClientData",passport.authenticate("jwt", { session: false }),getClientData);
 router.get("/getBankList", passport.authenticate("jwt", { session: false }), getBankList);
 router.post("/request", passport.authenticate("jwt", { session: false }), request);
 

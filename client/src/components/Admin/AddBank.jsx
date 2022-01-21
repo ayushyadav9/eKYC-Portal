@@ -1,6 +1,7 @@
 import React, { useState,useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Flex, Box, Card, Heading, Form, Field, Button,Loader,Text } from "rimble-ui";
+import { baseURL } from "../../api.js";
 import InitialiseWeb3 from "../utils/web3.js";
 
 const AddBank = () => {
@@ -14,12 +15,12 @@ const AddBank = () => {
     bName:"",
     bAddress:"",
     bContact:"",
-    bWallet:""
+    bWallet:"",
+    bEmail:""
   })
 
   const handelSubmit = (e)=>{
     e.preventDefault()
-    setisLoading(true);
     addBank();
   }
 
@@ -35,28 +36,43 @@ const AddBank = () => {
   };
 
   const addBank = async()=>{
-    console.log(accounts[0]);
     if (dmr && accounts) {
-      
-      try {
-        dmr.methods
-        .addBank(
-          formData.bName,
-          formData.bAddress,
-          formData.bContact,
-          formData.bWallet
-        )
-        .send({ from: accounts[0] })
-        .then((res) => {
-          console.log(res);
-          setMessage("Account Added Successfully");
+      setisLoading(true);
+      fetch(`${baseURL}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({email: formData.bEmail, sender:"bank", ethAddress:formData.bWallet})
+      })
+        .then((res) => res.json())
+        .then((result, err) => {
           setisLoading(false);
-        });
-      } catch (err) {
-        setisLoading(false);
-        setMessage("Failed");
-        console.log(err)
-      }
+          if(err){
+            console.log(err)
+            return
+          }
+          if(result.success){
+            dmr.methods
+            .addBank(
+              formData.bName,
+              formData.bAddress,
+              formData.bContact,
+              formData.bWallet
+            )
+            .send({ from: accounts[0] })
+            .then((res) => {
+              console.log(res);
+              setMessage("Account Added Successfully");
+            })
+            .catch((err)=>{
+              setMessage("Failed");
+              console.log(err)
+            })
+          }
+          else{
+            console.log(result)
+            setMessage(result.message);
+          }
+        })
     }
   }
 
@@ -81,6 +97,11 @@ const AddBank = () => {
               <Box width={1} px={3}>
                 <Field label="Bank Name" width={1}>
                   <Form.Input type="text" name="name" value={formData.bName} onChange={(e)=>setformData({...formData,'bName':e.target.value})} required width={1} />
+                </Field>
+              </Box>
+              <Box width={1} px={3}>
+                <Field label="Bank Email" width={1}>
+                  <Form.Input type="email" name="email" value={formData.bEmail} onChange={(e)=>setformData({...formData,'bEmail':e.target.value})} required width={1} />
                 </Field>
               </Box>
               <Box width={1} px={3}>
