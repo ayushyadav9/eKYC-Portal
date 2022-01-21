@@ -9,6 +9,12 @@ require('dotenv').config();
 require('./config/db');
 require('./config/passJWT');
 
+const io = require("socket.io")(server, {
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST"],
+    },
+});
 
 const port = process.env.PORT || 5000
 app.use(cors())
@@ -20,13 +26,6 @@ app.use('/', require('./api/routes'));
 
 
 //Video Calling Server
-const io = require("socket.io")(server, {
-    cors: {
-      origin: "*",
-      methods: ["GET", "POST"],
-    },
-});
-
 io.on("connection", (socket) => {
     socket.emit("me", socket.id);
   
@@ -60,8 +59,6 @@ io.on("connection", (socket) => {
 });
 
 
-
-
 app.use((req, res, next) => {
     const error = new Error('Not found');
     error.status = 404;
@@ -78,7 +75,7 @@ app.use((error, req, res) => {
     });
 });
 
-app.listen(port, (err) => {
+server.listen(port, (err) => {
     if (err) {
         logger.error(err);
     }
