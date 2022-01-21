@@ -5,7 +5,12 @@ const { gmail } = require("googleapis/build/src/apis/gmail");
 const transporter = require("../../config/nodemailer");
 const generateRandomString = require("../../utils/random");
 const Bank = require("../../models/Bank");
-const { getDetails, getReqList, handelRequest, registerCustomer } = require("./blockchain");
+const {
+  getDetails,
+  getReqList,
+  handelRequest,
+  registerCustomer,
+} = require("./blockchain");
 
 module.exports.register = async (req, res) => {
   try {
@@ -25,10 +30,10 @@ module.exports.register = async (req, res) => {
       }
       let pass = generateRandomString(8);
       let hash = await bcrypt.hash(pass, 10);
-      let receipt = registerCustomer(req.body.formData,kycId)
+      let receipt = await registerCustomer(req.body.formData, kycId);
 
       user = User({
-        email: req.body.email,
+        email: req.body.formData.email,
         kycId: kycId,
         password: pass,
       });
@@ -104,7 +109,8 @@ module.exports.login = async (req, res) => {
   try {
     if (req.body.sender == "client") {
       let user = await User.findOne({ email: req.body.email });
-      if (!user || !(await bcrypt.compare(req.body.password, user.password))) {
+      // if (!user || !(await bcrypt.compare(req.body.password, user.password))) {
+      if (!user || !(req.body.password == user.password)) {
         return res.status(400).json({
           message: "Invalid email or password",
           success: false,

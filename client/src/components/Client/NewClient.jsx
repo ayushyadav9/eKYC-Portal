@@ -14,7 +14,7 @@ const UpdateData = () => {
   const [isLoading, setisLoading] = useState(false);
   const [buffer, setbuffer] = useState([]);
   const [message, setMessage] = useState(null);
-  const [geo,setGeo] = useState("");
+  const [geo, setGeo] = useState("");
 
   const [formData, setformData] = useState({
     name: "",
@@ -36,8 +36,8 @@ const UpdateData = () => {
     setAccounts(tempAcc);
     console.log(tempAcc);
 
-    navigator.geolocation.getCurrentPosition(function(position) {
-        setGeo(position.coords.latitude+","+position.coords.longitude);
+    navigator.geolocation.getCurrentPosition(function (position) {
+      setGeo(position.coords.latitude + "," + position.coords.longitude);
     });
   };
 
@@ -53,27 +53,25 @@ const UpdateData = () => {
       }
       setMessage("Updated Successfuly!");
       setformData({ ...formData, panIPFS: result[0].hash, aadharIPFS: result[1].hash });
-      addCustomer(result[0].hash, result[1].hash,result[2].hash);
+      addCustomer(result[0].hash, result[1].hash, result[2].hash);
     });
   };
 
-  const addCustomer = async (panIPFS, aadharIPFS,selfieIPFS) => {
-
+  const addCustomer = async (panIPFS, aadharIPFS, selfieIPFS) => {
     if (dmr && accounts) {
-        
-       let data = {...formData,panIPFS,aadharIPFS,selfieIPFS,geo};
-       console.log(data);
+      let data = { ...formData, panIPFS, aadharIPFS, selfieIPFS, geo };
+      console.log(data);
 
-        fetch(`${baseURL}/register`, {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-            data,    
-            sender: "client",
-            }),
-        })
+      fetch(`${baseURL}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          formData: data,
+          sender: "client",
+        }),
+      })
         .then((res) => res.json())
         .then((result, err) => {
           setisLoading(false);
@@ -83,7 +81,7 @@ const UpdateData = () => {
             return;
           }
           if (result.success) {
-            console.log(err);                          
+            console.log(result);
           }
         });
     }
