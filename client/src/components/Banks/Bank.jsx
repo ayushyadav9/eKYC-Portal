@@ -7,7 +7,7 @@ import InitialiseWeb3 from "../utils/web3.js";
 import Web3 from "web3";
 import VerifyClient from "./VerifyClient.jsx";
 
-const Bank = () => {
+const Bank = () => {  
   const history = useHistory();
   const [dmr, setDmr] = useState(null);
   const [accounts, setAccounts] = useState(null);
@@ -16,6 +16,7 @@ const Bank = () => {
   const [approvedClients, setApprovedClients] = useState([]);
   const [customerKycId, setCustomerKycId] = useState("");
   const [isPopupOpen,setIsPopupOpen] = useState(false);
+  const [clientData,setClientData] = useState(null);
 
   useEffect(() => {
     setup();
@@ -117,17 +118,19 @@ const Bank = () => {
           .then((res) => {
             console.log(res);
             getBankData();
+            togglePopup();
           })
           .catch((err) => {
             console.log(err);
           });
       } else {
         dmr.methods
-          .rejectKyc(kycId, bankDetails.name, "REJECT", Date.now())
+          .rejectKyc(kycId, bankDetails.bName, "REJECT", Date.now())
           .send({ from: accounts[0] })
           .then((res) => {
             console.log(res);
             getBankData();
+            togglePopup();
           })
           .catch((err) => {
             console.log(err);
@@ -136,8 +139,8 @@ const Bank = () => {
     }
   };
 
-  const togglePopup = () => {
-    console.log("here");
+  const togglePopup = (data) => {    
+    setClientData(data);
     setIsPopupOpen((prev)=>{
       return !prev;
     })    
@@ -145,7 +148,7 @@ const Bank = () => {
 
   return (
     <>
-    {isPopupOpen &&  <VerifyClient togglePopup={togglePopup}/>}
+    {isPopupOpen &&  <VerifyClient kycVerdictHandler={kycVerdictHandler} dmr={dmr} accounts={accounts} data={clientData} togglePopup={togglePopup}/>}
 
     <Flex minWidth={380}>
       <Box mx={"auto"} width={[1, 11 / 12, 10 / 12]}>
@@ -167,7 +170,7 @@ const Bank = () => {
           {bankDetails && <BankData data={[bankDetails]} />}
         </Card>
         <Card mt={20}>
-          <Heading as={"h2"}>Get Client data</Heading>
+          <Heading as={"h2"}>Request Access</Heading>
           <Flex mx={5}>
             <Flex mr={3}>
               <Form.Field label="Client KYC ID" width={1}>
@@ -225,25 +228,11 @@ const Bank = () => {
                         <Button
                             my={"auto"}
                             mr={4}
-                            onClick={togglePopup}
+                            onClick={()=>togglePopup(req)}
                           >
-                            <p>Verify</p>
+                          <p>Verify</p>
                         </Button>
 
-                        <Button
-                          my={"auto"}
-                          mr={4}
-                          onClick={() => kycVerdictHandler(req.kycId, true)}
-                        >
-                          <p>Approve</p>
-                        </Button>
-                        <Button
-                          my={"auto"}
-                          mr={4}
-                          onClick={() => kycVerdictHandler(req.kycId, false)}
-                        >
-                          <p>Reject</p>
-                        </Button>
                       </Flex>
                     </Flex>
                   </Box>
