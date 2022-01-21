@@ -25,10 +25,11 @@ const Bank = () => {
   };
 
   const getBankDetails = async () => {
+    console.log(accounts);
     if (dmr && accounts) {
       dmr.methods
         .getBankByAddress(accounts[0])
-        .call()
+        .call({ from: accounts[0] })
         .then((res) => {
           console.log(res);
           const bankInfo = {
@@ -60,7 +61,6 @@ const Bank = () => {
         });
     }
   };
-
 
   useEffect(() => {
     if (dmr && accounts) {
@@ -199,34 +199,39 @@ const Bank = () => {
         <Box mx={"auto"} mt={20}>
           <Card>
             <Heading as={"h2"}>Approved Requests</Heading>
-            {approvedClients.length>0 ?approvedClients.map((req, i) => {
-              return (
-                <Box bg={"rgba(108, 160, 249, 0.2)"} m={3} borderRadius={1}>
-                  <Flex justifyContent="space-between">
-                    <Heading as={"h3"} p={2} pl={4}>
-                      {req.name}
-                    </Heading>
-                    <Flex>
-                      <Button
-                        my={"auto"}
-                        mr={4}
-                        onClick={() => kycVerdictHandler(req.kycId, true)}
-                      >
-                        <p>Approve</p>
-                      </Button>
-                      <Button
-                        my={"auto"}
-                        mr={4}
-                        onClick={() => kycVerdictHandler(req.kycId, false)}
-                      >
-                        <p>Reject</p>
-                      </Button>
+            {approvedClients.length > 0 ? (
+              approvedClients.map((req, i) => {
+                return (
+                  <Box bg={"rgba(108, 160, 249, 0.2)"} m={3} borderRadius={1}>
+                    <Flex justifyContent="space-between">
+                      <Heading as={"h3"} p={2} pl={4}>
+                        {req.name}
+                      </Heading>
+                      <Flex>
+                        <Button
+                          my={"auto"}
+                          mr={4}
+                          onClick={() => kycVerdictHandler(req.kycId, true)}
+                        >
+                          <p>Approve</p>
+                        </Button>
+                        <Button
+                          my={"auto"}
+                          mr={4}
+                          onClick={() => kycVerdictHandler(req.kycId, false)}
+                        >
+                          <p>Reject</p>
+                        </Button>
+                      </Flex>
                     </Flex>
-                  </Flex>
-                </Box>
-              );
-            }):
-            <Heading as={"h3"} p={2} pl={4}>No approval requests</Heading>}
+                  </Box>
+                );
+              })
+            ) : (
+              <Heading as={"h3"} p={2} pl={4}>
+                No approval requests
+              </Heading>
+            )}
           </Card>
         </Box>
         <Card mt={20}></Card>
