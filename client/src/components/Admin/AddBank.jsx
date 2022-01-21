@@ -36,6 +36,30 @@ const AddBank = () => {
   };
 
   const addBank = async()=>{
+
+    // if(dmr && accounts){
+    //   dmr.methods
+    //   .addBank(
+    //     formData.bName,
+    //     formData.bAddress,
+    //     formData.bContact,
+    //     formData.bWallet
+    //   )
+    //   .send({ from: accounts[0] })
+    //   .then((res) => {
+    //     console.log(res);
+    //     setMessage("Account Added Successfully");
+    //   })
+    //   .catch((err)=>{
+    //     setMessage("Failed");
+    //     console.log(err)
+    //   })
+    // }
+    // else{
+    //   console.log("Accounts Haga")      
+    // }
+
+
     if (dmr && accounts) {
       setisLoading(true);
       fetch(`${baseURL}/register`, {

@@ -1,15 +1,61 @@
-import React from 'react';
+import React, { useEffect,useState} from 'react';
 import styled from "styled-components";
+import ClientData from"../Client/ClientData";
+import { Button } from "rimble-ui";
 
-const VerifyClient = ({togglePopup}) => {
+const VerifyClient = ({togglePopup,data,dmr,accounts,kycVerdictHandler}) => {
+
+  const [clientData, setClientData] = useState(null);
+  useEffect(() => {
+
+    if (dmr && accounts) {
+      dmr.methods
+        .getCustomerDetails(data.kycId)
+        .call({ from: accounts[0] })
+        .then((res) => {
+          console.log(res)
+          let t = {
+            name:res.name,
+            gender:res.gender,
+            phone:res.phone,
+            address:res.customerAddress,
+            email:res.email,
+            kycId:res.kycId,
+            kycStatus:res.kycStatus,
+            records:res.records
+          }
+          setClientData(t);          
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }            
+  }, []);
+  
   return (
       <PopupContainer>
         <div className="popup-box">
             <span className="close-icon" onClick={togglePopup}>
                 x
-            </span>
-            <div className="box">Gane MArle Meri</div>
-        </div>
+            </span>           
+            {clientData && <div className="box"><ClientData userData={clientData}/></div>}            
+            <div align="center">
+              <Button
+                my={"auto"}
+                mr={4}
+                onClick={() => kycVerdictHandler(clientData.kycId, true)}
+              >
+              <p>Approve</p>
+              </Button>
+              <Button
+                my={"auto"}
+                mr={4}
+                onClick={() => kycVerdictHandler(clientData.kycId, false)}
+              >
+              <p>Reject</p>
+              </Button>
+            </div>
+        </div>        
       </PopupContainer>
   )
 };
