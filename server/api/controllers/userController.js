@@ -5,12 +5,7 @@ const { gmail } = require("googleapis/build/src/apis/gmail");
 const transporter = require("../../config/nodemailer");
 const generateRandomString = require("../../utils/random");
 const Bank = require("../../models/Bank");
-const {
-  getDetails,
-  getReqList,
-  handelRequest,
-  registerCustomer,
-} = require("./blockchain");
+const { getDetails, getReqList, handelRequest, registerCustomer, updateRecordBC} = require("./blockchain");
 
 module.exports.register = async (req, res) => {
   try {
@@ -30,7 +25,7 @@ module.exports.register = async (req, res) => {
       }
       let pass = generateRandomString(8);
       let hash = await bcrypt.hash(pass, 10);
-      let receipt = await registerCustomer(req.body.formData, kycId);
+      let receipt = await registerCustomer(req.body.formData,kycId)
 
       user = User({
         email: req.body.formData.email,
@@ -109,8 +104,7 @@ module.exports.login = async (req, res) => {
   try {
     if (req.body.sender == "client") {
       let user = await User.findOne({ email: req.body.email });
-      // if (!user || !(await bcrypt.compare(req.body.password, user.password))) {
-      if (!user || !(req.body.password == user.password)) {
+      if (!user || !(req.body.password == user.password)){
         return res.status(400).json({
           message: "Invalid email or password",
           success: false,
@@ -222,6 +216,24 @@ module.exports.getBankList = async (req, res) => {
         pendingBanks: bankList.pendingBanks,
         approvedBanks: bankList.approvedBanks,
       },
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      message: "Something went wrong",
+      success: false,
+    });
+  }
+};
+
+module.exports.updateRecord = async (req, res) => {
+  
+  try {    
+    let t = await updateRecordBC(req.user.kycId,req.body.record_type,req.body.record_data);    
+    console.log(t);
+    res.status(200).json({
+      message: "Data Updated Successfully",      
       success: true,
     });
   } catch (error) {

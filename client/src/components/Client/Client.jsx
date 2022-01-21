@@ -110,7 +110,7 @@ const Client = () => {
               </Heading>
             </Box>
             <Box my={"auto"}>
-              <Button mr={2} onClick={() => history.push("/client/update")}>
+              <Button mr={2} onClick={() => history.push("/client/UpdateRecord")}>
                 Update Details
               </Button>
               <Button>Logout</Button>

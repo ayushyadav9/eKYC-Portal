@@ -7,14 +7,14 @@ import { ToastContainer, toast } from "react-toastify";
 const IPFS = require("ipfs-api");
 const ipfs = new IPFS({ host: "ipfs.infura.io", port: 5001, protocol: "https" });
 
-const UpdateData = () => {
+const NewClient = () => {
   const history = useHistory();
   const [dmr, setDmr] = useState(null);
   const [accounts, setAccounts] = useState(null);
   const [isLoading, setisLoading] = useState(false);
-  const [buffer, setbuffer] = useState([]);
+  const [buffer, setbuffer] = useState([0,1,2]);
   const [message, setMessage] = useState(null);
-  const [geo, setGeo] = useState("");
+  const [geo,setGeo] = useState("");
 
   const [formData, setformData] = useState({
     name: "",
@@ -36,8 +36,8 @@ const UpdateData = () => {
     setAccounts(tempAcc);
     console.log(tempAcc);
 
-    navigator.geolocation.getCurrentPosition(function (position) {
-      setGeo(position.coords.latitude + "," + position.coords.longitude);
+    navigator.geolocation.getCurrentPosition(function(position) {
+        setGeo(position.coords.latitude+","+position.coords.longitude);
     });
   };
 
@@ -51,27 +51,29 @@ const UpdateData = () => {
         setMessage("Something went wrong!");
         return;
       }
-      setMessage("Updated Successfuly!");
-      setformData({ ...formData, panIPFS: result[0].hash, aadharIPFS: result[1].hash });
-      addCustomer(result[0].hash, result[1].hash, result[2].hash);
+      setMessage("Updated Successfuly!");      
+      console.log(result)
+      addCustomer(result[0].hash, result[1].hash,result[2].hash);
     });
   };
 
-  const addCustomer = async (panIPFS, aadharIPFS, selfieIPFS) => {
-    if (dmr && accounts) {
-      let data = { ...formData, panIPFS, aadharIPFS, selfieIPFS, geo };
-      console.log(data);
+  const addCustomer = async (panIPFS,aadharIPFS,selfieIPFS) => {
 
-      fetch(`${baseURL}/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          formData: data,
-          sender: "client",
-        }),
-      })
+    if (dmr && accounts) {
+        
+       let data = {...formData,panIPFS,aadharIPFS,selfieIPFS,geo};
+       console.log(data);
+
+        fetch(`${baseURL}/register`, {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+            formData: data,    
+            sender: "client",
+            }),
+        })
         .then((res) => res.json())
         .then((result, err) => {
           setisLoading(false);
@@ -80,19 +82,19 @@ const UpdateData = () => {
             toast.error("Something went wrong");
             return;
           }
-          if (result.success) {
-            console.log(result);
-          }
         });
     }
   };
 
-  const captureFile = (e) => {
+  const captureFile = (e,i) => {
     const file = e.target.files[0];
     const reader = new window.FileReader();
     reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
-      setbuffer([...buffer, Buffer(reader.result)]);
+      let buf = buffer
+      console.log(e,i)
+      buf[i] = Buffer(reader.result)
+      setbuffer(buf);
     };
   };
 
@@ -211,17 +213,17 @@ const UpdateData = () => {
               <Flex px={1} mx={"100px"}>
                 <Box width={1} px={3}>
                   <Field label="PAN Card" width={1}>
-                    <Form.Input type="file" required width={1} onChange={captureFile} />
+                    <Form.Input type="file" required width={1} onChange={(e)=>captureFile(e,0)} />
                   </Field>
                 </Box>
                 <Box width={1} px={3}>
                   <Field label="Aadhar Card" width={1}>
-                    <Form.Input type="file" required width={1} onChange={captureFile} />
+                    <Form.Input type="file" required width={1} onChange={(e)=>captureFile(e,1)} />
                   </Field>
                 </Box>
                 <Box width={1} px={3}>
                   <Field label="Selfie" width={1}>
-                    <Form.Input type="file" required width={1} onChange={captureFile} />
+                    <Form.Input type="file" required width={1} onChange={(e)=>captureFile(e,2)} />
                   </Field>
                 </Box>
               </Flex>
@@ -248,4 +250,4 @@ const UpdateData = () => {
   );
 };
 
-export default UpdateData;
+export default NewClient;

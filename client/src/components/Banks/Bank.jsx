@@ -7,7 +7,7 @@ import InitialiseWeb3 from "../utils/web3.js";
 import Web3 from "web3";
 import VerifyClient from "./VerifyClient.jsx";
 
-const Bank = () => {
+const Bank = () => {  
   const history = useHistory();
   const [dmr, setDmr] = useState(null);
   const [accounts, setAccounts] = useState(null);
@@ -15,7 +15,8 @@ const Bank = () => {
   const [pendingClientRequests, setPendingClientRequests] = useState([]);
   const [approvedClients, setApprovedClients] = useState([]);
   const [customerKycId, setCustomerKycId] = useState("");
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isPopupOpen,setIsPopupOpen] = useState(false);
+  const [clientData,setClientData] = useState(null);
 
   useEffect(() => {
     setup();
@@ -117,17 +118,19 @@ const Bank = () => {
           .then((res) => {
             console.log(res);
             getBankData();
+            togglePopup();
           })
           .catch((err) => {
             console.log(err);
           });
       } else {
         dmr.methods
-          .rejectKyc(kycId, bankDetails.name, "REJECT", Date.now())
+          .rejectKyc(kycId, bankDetails.bName, "REJECT", Date.now())
           .send({ from: accounts[0] })
           .then((res) => {
             console.log(res);
             getBankData();
+            togglePopup();
           })
           .catch((err) => {
             console.log(err);
@@ -136,125 +139,115 @@ const Bank = () => {
     }
   };
 
-  const togglePopup = () => {
-    console.log("here");
-    setIsPopupOpen((prev) => {
+  const togglePopup = (data) => {    
+    setClientData(data);
+    setIsPopupOpen((prev)=>{
       return !prev;
-    });
+    })    
   };
 
   return (
     <>
-      {isPopupOpen && <VerifyClient togglePopup={togglePopup} />}
+    {isPopupOpen &&  <VerifyClient kycVerdictHandler={kycVerdictHandler} dmr={dmr} accounts={accounts} data={clientData} togglePopup={togglePopup}/>}
 
-      <Flex minWidth={380}>
-        <Box mx={"auto"} width={[1, 11 / 12, 10 / 12]}>
-          <Flex px={2} mx={"auto"} justifyContent="space-between">
-            <Box my={"auto"}>
-              <Heading as={"h1"} color="primary">
-                eKYC
-              </Heading>
-            </Box>
-            <Box my={"auto"}>
-              <Button mr={2} onClick={() => history.push("/bank/update")}>
-                Add New Customer
+    <Flex minWidth={380}>
+      <Box mx={"auto"} width={[1, 11 / 12, 10 / 12]}>
+        <Flex px={2} mx={"auto"} justifyContent="space-between">
+          <Box my={"auto"}>
+            <Heading as={"h1"} color="primary">
+              eKYC
+            </Heading>
+          </Box>
+          <Box my={"auto"}>
+            <Button mr={2} onClick={() => history.push("/bank/update")}>
+              Add New Customer
+            </Button>
+            <Button>Logout</Button>
+          </Box>
+        </Flex>
+        <Card>
+          <Heading as={"h2"}>Bank Data</Heading>
+          {bankDetails && <BankData data={[bankDetails]} />}
+        </Card>
+        <Card mt={20}>
+          <Heading as={"h2"}>Request Access</Heading>
+          <Flex mx={5}>
+            <Flex mr={3}>
+              <Form.Field label="Client KYC ID" width={1}>
+                <Form.Input
+                  type="text"
+                  required
+                  value={customerKycId}
+                  onChange={(e) => setCustomerKycId(e.target.value)}
+                />
+              </Form.Field>
+              <Button mt={"28px"} type="submit" onClick={handleSendRequest}>
+                Send Request
               </Button>
-              <Button>Logout</Button>
-            </Box>
-          </Flex>
-          <Card>
-            <Heading as={"h2"}>Bank Data</Heading>
-            {bankDetails && <BankData data={[bankDetails]} />}
-          </Card>
-          <Card mt={20}>
-            <Heading as={"h2"}>Get Client data</Heading>
-            <Flex mx={5}>
-              <Flex mr={3}>
-                <Form.Field label="Client KYC ID" width={1}>
-                  <Form.Input
-                    type="text"
-                    required
-                    value={customerKycId}
-                    onChange={(e) => setCustomerKycId(e.target.value)}
-                  />
-                </Form.Field>
-                <Button mt={"28px"} type="submit" onClick={handleSendRequest}>
-                  Send Request
-                </Button>
-              </Flex>
             </Flex>
-          </Card>
+          </Flex>
+        </Card>
 
-          <Box mx={"auto"} mt={20}>
-            <Card>
-              <Heading as={"h2"}>Pending Requests</Heading>
-              {pendingClientRequests.map((req, i) => {
+        <Box mx={"auto"} mt={20}>
+          <Card>
+            <Heading as={"h2"}>Pending Requests</Heading>
+            {pendingClientRequests.map((req, i) => {
+              return (
+                <Box bg={"rgba(108, 160, 249, 0.2)"} m={3} borderRadius={1} key={i}>
+                  <Flex justifyContent="space-between">
+                    <Heading as={"h3"} p={2} pl={4}>
+                      {req.name}
+                    </Heading>
+                    <Button
+                      my={"auto"}
+                      mr={4}
+                      onClick={() => handleCancelRequest(req.kycId)}
+                    >
+                      <p>Cancel Request</p>
+                    </Button>
+                  </Flex>
+                </Box>
+              );
+            })}
+          </Card>
+        </Box>
+
+        <Box mx={"auto"} mt={20}>
+          <Card>
+            <Heading as={"h2"}>Approved Requests</Heading>
+            {approvedClients.length > 0 ? (
+              approvedClients.map((req, i) => {
                 return (
-                  <Box bg={"rgba(108, 160, 249, 0.2)"} m={3} borderRadius={1} key={i}>
+                  <Box bg={"rgba(108, 160, 249, 0.2)"} m={3} borderRadius={1}>
                     <Flex justifyContent="space-between">
                       <Heading as={"h3"} p={2} pl={4}>
                         {req.name}
                       </Heading>
                       <Flex>
-                        <Button my={"auto"} mr={4} onClick={togglePopup}>
+
+                        <Button
+                            my={"auto"}
+                            mr={4}
+                            onClick={()=>togglePopup(req)}
+                          >
                           <p>Verify</p>
                         </Button>
-                        <Button
-                          my={"auto"}
-                          mr={4}
-                          onClick={() => handleCancelRequest(req.kycId)}
-                        >
-                          <p>Cancel Request</p>
-                        </Button>
+
                       </Flex>
                     </Flex>
                   </Box>
                 );
-              })}
-            </Card>
-          </Box>
-
-          <Box mx={"auto"} mt={20}>
-            <Card>
-              <Heading as={"h2"}>Approved Requests</Heading>
-              {approvedClients.length > 0 ? (
-                approvedClients.map((req, i) => {
-                  return (
-                    <Box bg={"rgba(108, 160, 249, 0.2)"} m={3} borderRadius={1}>
-                      <Flex justifyContent="space-between">
-                        <Heading as={"h3"} p={2} pl={4}>
-                          {req.name}
-                        </Heading>
-                        <Flex>
-                          <Button
-                            my={"auto"}
-                            mr={4}
-                            onClick={() => kycVerdictHandler(req.kycId, true)}
-                          >
-                            <p>Approve</p>
-                          </Button>
-                          <Button
-                            my={"auto"}
-                            mr={4}
-                            onClick={() => kycVerdictHandler(req.kycId, false)}
-                          >
-                            <p>Reject</p>
-                          </Button>
-                        </Flex>
-                      </Flex>
-                    </Box>
-                  );
-                })
-              ) : (
-                <Heading as={"h3"} p={2} pl={4}>
-                  No approval requests
-                </Heading>
-              )}
-            </Card>
-          </Box>
-          <Card mt={20}></Card>
+              })
+            ) : (
+              <Heading as={"h3"} p={2} pl={4}>
+                No approval requests
+              </Heading>
+            )}
+          </Card>
         </Box>
-      </Flex>
+        <Card mt={20}></Card>
+      </Box>
+    </Flex>
     </>
   );
 };

@@ -11,45 +11,63 @@ const ClientData = ({ userData }) => {
           </Heading>
         </Box>
         <Box width={1}>
-          <Text>
-            <strong>Name: </strong> {userData.name}
-          </Text>
-          <Text>
-            <strong>Gender: </strong> {userData.gender}
-          </Text>
-          <Text>
-            <strong>Phone: </strong> {userData.phone}
-          </Text>
-          <Text>
-            <strong>Address: </strong> {userData.address}
-          </Text>
-          <Text>
-            <strong>Email: </strong> {userData.email}
-          </Text>
-          <Text>
-            <strong>KYC-Id: </strong> {userData.kycId}
-          </Text>
-          <Text>
-            <strong>KYC Status: </strong>{" "}
-            {userData.kycStatus ? "Approved" : "Not Approved"}
-          </Text>
+          
+          <Flex>
+            <Box width={"400px"}>
+              <Image
+                alt="Selfie img"                
+                src={`https://ipfs.io/ipfs/${userData.records[2][1]}`}
+              />
+            </Box>
+            <Box mx={"100px"}>
+              <Text>
+                <strong>Name: </strong> {userData.name}
+              </Text>
+              <Text>
+                <strong>Gender: </strong> {userData.gender}
+              </Text>
+              <Text>
+                <strong>Phone: </strong> {userData.phone}
+              </Text>
+              <Text>
+                <strong>Address: </strong> {userData.address}
+              </Text>
+              <Text>
+                <strong>Email: </strong> {userData.email}
+              </Text>
+              <Text>
+                <strong>KYC-Id: </strong> {userData.kycId}
+              </Text>
+              <Text>
+                <strong>KYC Status: </strong>{" "}
+                {userData.kycStatus ? "Approved" : "Not Approved"}
+              </Text>
+            </Box>  
+          </Flex>
+          
+          <Flex>
+            <Box>
+              <Text>
+                <strong>Aadhar Card: </strong>
+              </Text>
+              <Image
+                alt="aadhar img"
+                width={0.5}
+                src={`https://ipfs.io/ipfs/${userData.records[0][1]}`}
+              />
+            </Box>
+            <Box>
+              <Text>
+                <strong>PAN Card: </strong>
+              </Text>
+              <Image
+                alt="pan img"
+                width={0.5}
+                src={`https://ipfs.io/ipfs/${userData.records[1][1]}`}
+              />
+            </Box>
+          </Flex>
 
-          <Text>
-            <strong>Aadhar Card: </strong>
-          </Text>
-          <Image
-            alt="aadhar img"
-            width={0.5}
-            src={`https://ipfs.io/ipfs/${userData.records[0][1]}`}
-          />
-          <Text>
-            <strong>PAN Card: </strong>
-          </Text>
-          <Image
-            alt="pan img"
-            width={0.5}
-            src={`https://ipfs.io/ipfs/${userData.records[1][1]}`}
-          />
         </Box>
       </Flex>
     </Box>
