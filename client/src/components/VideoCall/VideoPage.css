@@ -1,0 +1,22 @@
+@font-face {
+  font-family: Gilroy;
+  src: url(../../assets/gilroy.otf);
+}
+@font-face {
+  font-family: gilroy-light;
+  src: url(../../assets/Gilroy-Light.otf);
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.videoPageBody {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: Gilroy !important;
+  background-color: #00b4dbac !important;
+  background: linear-gradient(to right, hsl(200, 100%, 40%), hsl(191, 100%, 43%));
+}
