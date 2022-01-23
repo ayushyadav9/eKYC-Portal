@@ -16,7 +16,7 @@ import { socket } from "../../../context/VideoState";
 
 // const socket = io()
 const { Search } = Input;
-const Video = () => {
+const Video = (props) => {
   const {
     call,
     callAccepted,
@@ -56,9 +56,6 @@ const Video = () => {
   });
 
   const dummy = useRef();
-  const canvasEle = useRef();
-  const imageEle = useRef();
-  const [imageURL, setImageURL] = useState();
 
   useEffect(() => {
     if (dummy?.current) dummy.current.scrollIntoView({ behavior: "smooth" });
@@ -71,28 +68,6 @@ const Video = () => {
   const onSearch = (value) => {
     if (value && value.length) sendMsgFunc(value);
     setSendMsg("");
-  };
-
-  const clickScreenshot = async () => {
-    // Get the exact size of the video element.
-    const width = userVideo.current.videoWidth;
-    const height = userVideo.current.videoHeight;
-
-    // get the context object of hidden canvas
-    const ctx = canvasEle.current.getContext("2d");
-
-    // Set the canvas to the same dimensions as the video.
-    canvasEle.current.width = width;
-    canvasEle.current.height = height;
-
-    // Draw the current frame from the video on the canvas.
-    ctx.drawImage(userVideo.current, 0, 0, width, height);
-
-    // Get an image dataURL from the canvas.
-    const imageDataURL = canvasEle.current.toDataURL("image/png");
-
-    // Set the dataURL as source of an image element, showing the captured photo.
-    setImageURL(imageDataURL);
   };
 
   useEffect(() => {
@@ -205,7 +180,11 @@ const Video = () => {
               </Modal>
 
               {callAccepted && !callEnded && (
-                <div className="icons" onClick={() => clickScreenshot()} tabIndex="0">
+                <div
+                  className="icons"
+                  onClick={() => props.clickScreenshot(userVideo)}
+                  tabIndex="0"
+                >
                   <img src={ScreenShotIcon} alt="screenshot icon" />
                 </div>
               )}
@@ -273,12 +252,6 @@ const Video = () => {
             </div>
           </div>
         )}
-      </div>
-      <div className="screenshot">
-        <canvas ref={canvasEle} style={{ display: "none" }}></canvas>
-        <div className="preview">
-          <img className="preview-img" src={imageURL} ref={imageEle} />
-        </div>
       </div>
     </>
   );
