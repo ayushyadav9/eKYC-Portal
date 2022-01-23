@@ -16,6 +16,7 @@ const VideoPage = (props) => {
   const [imageURL, setImageURL] = useState();
   const [imageFile, setImageFile] = useState();
   const [message, setMessage] = useState("");
+  const [buffer, setBuffer] = useState([]);
 
   useEffect(() => {
     if (!navigator.onLine) toast.error("Please connect to the internet!");
@@ -52,10 +53,14 @@ const VideoPage = (props) => {
     ctx.drawImage(userVideo.current, 0, 0, width, height);
 
     // Get an image dataURL from the canvas.
-    const imageDataURL = canvasEle.current.toDataURL("image/png");
-
-    // Set the dataURL as source of an image element, showing the captured photo.
+    let imageDataURL = canvasEle.current.toDataURL("image/png");
     setImageURL(imageDataURL);
+    imageDataURL = dataURLtoFile(imageDataURL,"userSelfie.png")
+    const reader = new window.FileReader();
+    reader.readAsArrayBuffer(imageDataURL);
+    reader.onloadend = () => {
+      setBuffer([Buffer(reader.result)]);
+    };
   };
 
   const dataURLtoFile = (dataurl, filename) => {
@@ -96,9 +101,8 @@ const VideoPage = (props) => {
   };
 
   const acceptKyc = () => {
-    const reader = new window.FileReader();
-    reader.readAsArrayBuffer(imageFile);
-    ipfs.files.add(Buffer([reader.result]), (error, result) => {
+    
+    ipfs.files.add(buffer, (error, result) => {
       // setisLoading(false);
       if (error) {
         console.error(error);
