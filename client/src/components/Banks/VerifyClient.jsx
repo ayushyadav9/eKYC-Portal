@@ -20,7 +20,8 @@ const VerifyClient = ({data,dmr,accounts}) => {
             email:res.email,
             kycId:res.kycId,
             kycStatus:res.kycStatus,
-            records:res.records
+            records:res.records,
+            kycHistory:res.kycHistory
           }
           setClientData(t);          
         })

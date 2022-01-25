@@ -21,6 +21,8 @@ const Bank = () => {
   const [clientData, setClientData] = useState(null);
   const [isLoading, setisLoading] = useState(false);
   const [userDataFooters, setUserDataFooters] = useState([]);
+  const [addRemPop, setaddRemPop] = useState(false);
+  const [remarks, setremarks] = useState("");
 
   useEffect(() => {
     setup();
@@ -48,7 +50,7 @@ const Bank = () => {
         })
         .catch((err) => {
           console.log(err);
-        });
+      });
     }
   };
 
@@ -64,7 +66,7 @@ const Bank = () => {
         .catch((err) => {
           console.log(err);
         });
-    }
+      }
   };
 
   useEffect(() => {
@@ -133,6 +135,7 @@ const Bank = () => {
 
   const togglePopup = (data, footers) => {
     setClientData(data);
+    console.log(data);
     setUserDataFooters(footers);
     setIsPopupOpen((prev) => {
       return !prev;
@@ -163,24 +166,34 @@ const Bank = () => {
   };
 
   const handleKycVerdict = (verdict) => {
-    if (dmr && accounts && clientData) {
+    setaddRemPop(true);
+  };
+
+  const handleVerdict = (verdict) => {
+    console.log(remarks);
+    if (dmr && accounts && clientData && remarks.length>0) {
       dmr.methods
         .updateKycStatus(
           clientData.kycId,
           bankDetails.bName,
-          "REJECT",
+          remarks,
           Date.now(),
           verdict
         )
         .send({ from: accounts[0] })
         .then((res) => {
           getBankData();
-          togglePopup();
+          handelAddRemarksPopup();
+          togglePopup()
         })
         .catch((err) => {
           console.log(err);
         });
     }
+  };
+
+  const handelAddRemarksPopup = () => {
+    setaddRemPop((prev) => !prev);
   };
 
   return (
@@ -197,7 +210,34 @@ const Bank = () => {
         }
         footer={userDataFooters}
       >
-        <VerifyClient dmr={dmr} accounts={accounts} data={clientData} />
+        <Modal
+          title="Add Remarks"
+          visible={addRemPop}
+          onCancel={handelAddRemarksPopup}
+          footer={[
+            <Button
+              type="primary"
+              onClick={() => handleVerdict(2)} 
+            >
+              Reject KYC
+            </Button>,
+            <Button
+              type="primary"
+              onClick={() => handleVerdict(1)} 
+            >
+              Accept KYC
+            </Button>
+          ]}
+        >
+          <Input
+            placeholder="Enter Remarks"
+            value={remarks}
+            onChange={(e) => setremarks(e.target.value)}
+          ></Input>
+        </Modal>
+        {clientData && (
+          <VerifyClient dmr={dmr} accounts={accounts} data={clientData} />
+        )}
       </Modal>
       <div
         style={{
@@ -215,7 +255,9 @@ const Bank = () => {
           }}
         >
           <div style={{ margin: "auto 0" }}>
-            <h1 style={{ color: "rgb(14 21 246 / 85%)", fontWeight: "700" }}>vKYC</h1>
+            <h1 style={{ color: "rgb(14 21 246 / 85%)", fontWeight: "700" }}>
+              vKYC
+            </h1>
           </div>
           <div style={{ margin: "auto 0" }}>
             <Button type="primary" ghost>
@@ -249,7 +291,11 @@ const Bank = () => {
               style={{ width: "20%" }}
               prefix={<UserOutlined />}
             />
-            <Button size="large" loading={isLoading} onClick={handleSendRequest}>
+            <Button
+              size="large"
+              loading={isLoading}
+              onClick={handleSendRequest}
+            >
               Send Request
             </Button>
           </div>
@@ -265,13 +311,21 @@ const Bank = () => {
               style={{ width: "20%" }}
               prefix={<UserOutlined />}
             />
-            <Button size="large" loading={isLoading} onClick={handleRequestData}>
+            <Button
+              size="large"
+              loading={isLoading}
+              onClick={handleRequestData}
+            >
               Access
             </Button>
           </div>
         </Card>
 
-        <Card title="Pending Requests" style={{ marginBottom: "20px" }} hoverable>
+        <Card
+          title="Pending Requests"
+          style={{ marginBottom: "20px" }}
+          hoverable
+        >
           {pendingClientRequests.length > 0
             ? pendingClientRequests.map((req, i) => {
                 return (
@@ -291,7 +345,11 @@ const Bank = () => {
             : "No pending requests"}
         </Card>
 
-        <Card title="Approved Requests" style={{ marginBottom: "20px" }} hoverable>
+        <Card
+          title="Approved Requests"
+          style={{ marginBottom: "20px" }}
+          hoverable
+        >
           {approvedClients.length > 0
             ? approvedClients.map((req, i) => {
                 return (
@@ -310,15 +368,9 @@ const Bank = () => {
                         </Button>,
                         <Button
                           type="primary"
-                          onClick={() => handleKycVerdict(1)} //Accept
+                          onClick={handelAddRemarksPopup} 
                         >
-                          Approve without vKYC
-                        </Button>,
-                        <Button
-                          type="primary"
-                          onClick={() => handleKycVerdict(2)} //Reject
-                        >
-                          Reject without vKYC
+                          Proceed without vKYC
                         </Button>,
                         <Button
                           key="back"

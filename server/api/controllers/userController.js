@@ -26,7 +26,7 @@ module.exports.register = async (req, res) => {
       let pass = generateRandomString(8);
       let hash = await bcrypt.hash(pass, 10);
       let receipt = await registerCustomer(req.body.formData,kycId)
-
+      console.log(receipt)
       user = User({
         email: req.body.formData.email,
         kycId: kycId,
