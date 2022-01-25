@@ -6,13 +6,9 @@ import { UserOutlined } from "@ant-design/icons";
 import './Home.css'
 
 const Home = () => {
-  const [loginData, setloginData] = useState({
-    email: "",
-    password: "",
-    sender: "",
-  });
-  const [isLoading, setisLoading] = useState(false);
+  const [loginData, setloginData] = useState({ email: "", password: "", sender: "" });
   const history = useHistory();
+  const [isLoading, setisLoading] = useState(false);
 
 
   const onFinish = values => {
