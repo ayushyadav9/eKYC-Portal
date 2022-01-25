@@ -139,6 +139,8 @@ module.exports.login = async (req, res) => {
         },
         success: true,
       });
+    } else if(req.body.sender == "bank"){
+      
     } else {
       res.status(400).json({
         message: "Sender not specified!",

@@ -122,6 +122,14 @@ const Client = () => {
               Update Details
             </Button>
             <Button></Button>
+            <Button
+              type="primary"
+              ghost
+              onClick={() => history.push("/client/video")}
+            >
+              Start Video KYC
+            </Button>
+            <Button></Button>
             <Button onClick={handelLogout} danger ghost>Logout</Button>
           </div>
         </div>

@@ -2,13 +2,11 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { Button, Input, Card, Modal, message, Form } from "antd";
 import InitialiseWeb3 from "../utils/web3.js";
-import { useHistory } from "react-router-dom";
 import { BankOutlined } from "@ant-design/icons";
 import { baseURL } from "../../api.js";
 const { Meta } = Card;
 
 const AdminPortal = () => {
-  const history = useHistory();
   const [dmr, setDmr] = useState(null);
   const [accounts, setAccounts] = useState(null);
   const [bankDetails, setBankDetails] = useState(null);

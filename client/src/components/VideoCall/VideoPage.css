@@ -17,6 +17,6 @@
   margin: 0;
   padding: 0;
   font-family: Gilroy !important;
-  background-color: #00b4dbac !important;
-  background: linear-gradient(to right, hsl(200, 100%, 40%), hsl(191, 100%, 43%));
+  /* background-color: #00b4dbac !important; */
+  /* background: linear-gradient(to right, hsl(200, 100%, 40%), hsl(191, 100%, 43%)); */
 }
