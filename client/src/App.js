@@ -4,7 +4,6 @@ import Client from "./components/Client/Client";
 import UpdateData from "./components/Banks/UpdateData";
 import Bank from "./components/Banks/Bank";
 import AdminPortal from "./components/Admin/AdminPortal";
-import AddBank from "./components/Admin/AddBank";
 import AddAuth from "./components/Admin/AddAuth";
 import ProtectedRoute from "./components/utils/Protected";
 import NewClient from "./components/Client/NewClient";
@@ -24,7 +23,6 @@ function App() {
         <ProtectedRoute exact path="/bank" component={Bank} />
         <ProtectedRoute exact path="/bank/update" component={UpdateData} />
         <Route exact path="/admin" component={AdminPortal} />
-        <Route exact path="/admin/AddBank" component={AddBank} />
         <Route exact path="/admin/AddAuth" component={AddAuth} />
         <Route exact path="/client/UpdateRecord" component={UpdateRecord} />
         <Route exact path="/client/NewClient" component={NewClient} />

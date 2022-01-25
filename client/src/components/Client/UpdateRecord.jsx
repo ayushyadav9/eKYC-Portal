@@ -45,7 +45,7 @@ const UpdateRecord = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        Authorization: `Bearer ${localStorage.getItem("clientToken")}`,
       },
       body: JSON.stringify(data),
     })
@@ -74,10 +74,9 @@ const UpdateRecord = () => {
 
   return (
     <>
-      <div style={{ marginTop: "100px" }}>
+      <div style={{ margin: "20px" }}>
         <div
           style={{
-            background: "#ECECEC",
             padding: "30px",
             width: "800px",
             margin: "0 auto",
@@ -88,7 +87,7 @@ const UpdateRecord = () => {
             style={{
               display: "flex",
               justifyContent: "end",
-              marginBottom: "10px",
+              marginBottom: "20px",
             }}
           >
             <Button

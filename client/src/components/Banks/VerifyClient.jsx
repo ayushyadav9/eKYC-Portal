@@ -1,7 +1,7 @@
 import React, { useEffect,useState} from 'react';
 import ClientData from"../Client/ClientData";
 
-const VerifyClient = ({togglePopup,data,dmr,accounts,kycVerdictHandler}) => {
+const VerifyClient = ({data,dmr,accounts}) => {
 
   const [clientData, setClientData] = useState(null);
   useEffect(() => {

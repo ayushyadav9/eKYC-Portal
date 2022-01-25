@@ -12,6 +12,7 @@ const Home = () => {
 
 
   const onFinish = values => {
+    console.log(values)
     if (loginData.sender === "bank" || loginData.sender === "client") {
       setisLoading(true)
       fetch(`${baseURL}/login`, {
@@ -31,8 +32,8 @@ const Home = () => {
           }
           if (result.success) {
             message.success(result.message);
-            localStorage.setItem("userToken", result.data.token);
-            history.push(`/${loginData.sender}`);
+            localStorage.setItem(`${values.sender}Token`, result.data.token);
+            history.push(`/${values.sender}`);
           } else {
             message.info(result.message);
           }

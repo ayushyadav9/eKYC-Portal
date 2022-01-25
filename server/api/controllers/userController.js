@@ -209,7 +209,6 @@ module.exports.getBankList = async (req, res) => {
   try {
     const user = req.user;
     const bankList = await getReqList(user.kycId);
-    console.log(bankList.pendingBanks);
     res.status(200).json({
       message: "Data Fetched from Blockchain",
       data: {
@@ -228,10 +227,8 @@ module.exports.getBankList = async (req, res) => {
 };
 
 module.exports.updateRecord = async (req, res) => {
-  
   try {    
     let t = await updateRecordBC(req.user.kycId,req.body.record_type,req.body.record_data);    
-    console.log(t);
     res.status(200).json({
       message: "Data Updated Successfully",      
       success: true,
@@ -244,7 +241,6 @@ module.exports.updateRecord = async (req, res) => {
     });
   }
 };
-
 
 module.exports.updateSocket = async (req, res) => {
   try {    

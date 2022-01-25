@@ -11,12 +11,15 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
       }
     };
     let location = useLocation();
-    const decodedJwt = parseJwt(localStorage.getItem("userToken")); 
+    console.log(location)
+    let tName =location.pathname==='/bank'? "bankToken":"clientToken"
+    
+    const decodedJwt = parseJwt(localStorage.getItem(tName)); 
   return (
     <Route
       {...rest}
       render={(props) => {
-        if (!localStorage.getItem("userToken") || decodedJwt.exp * 1000 < Date.now()){
+        if (!localStorage.getItem(tName) || decodedJwt.exp * 1000 < Date.now()){
         return <Redirect to={{pathname: '/',state: { from: location.pathname }}}  />
       }
         else return <Component {...props} />;

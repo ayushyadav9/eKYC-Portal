@@ -19,7 +19,7 @@ const Client = () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        Authorization: `Bearer ${localStorage.getItem("clientToken")}`,
       },
     })
       .then((res) => res.json())
@@ -42,7 +42,7 @@ const Client = () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        Authorization: `Bearer ${localStorage.getItem("clientToken")}`,
       },
     })
       .then((res) => res.json())
@@ -61,11 +61,12 @@ const Client = () => {
 
   const handleRequest = (e, _bankAddress, verdict) => {
     e.preventDefault();
+
     fetch(`${baseURL}/request`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        Authorization: `Bearer ${localStorage.getItem("clientToken")}`,
       },
       body: JSON.stringify({
         bAddress: _bankAddress,
@@ -81,10 +82,16 @@ const Client = () => {
         }
         if (result.success) {
           updateBankLists();
+          message.success("Response sent successfuly")
         }
         console.log(result);
       });
   };
+
+  const handelLogout = ()=>{
+    localStorage.removeItem('clientToken')
+    history.push('/')
+  }
 
   return (
     <>
@@ -104,7 +111,7 @@ const Client = () => {
           }}
         >
           <div style={{ margin: "auto 0" }}>
-            <h1 style={{ color: "rgb(14 21 246 / 85%)" }}>vKYC</h1>
+            <h1 style={{ color: "rgb(14 21 246 / 85%)",fontWeight:"700"}}>vKYC</h1>
           </div>
           <div style={{ margin: "auto 0" }}>
             <Button
@@ -115,7 +122,7 @@ const Client = () => {
               Update Details
             </Button>
             <Button></Button>
-            <Button>Logout</Button>
+            <Button onClick={handelLogout} danger ghost>Logout</Button>
           </div>
         </div>
 
@@ -165,16 +172,18 @@ const Client = () => {
                     }}
                   >
                     {data[0]}
-                    <Row>
+                    <Row style={{marginTop:"10px", display: "flex",justifyContent: "space-around"}}>
                       <Button
+                      type="primary"
                         mx={2}
                         onClick={(e) => handleRequest(e, data[1], true)}
                       >
-                        <p>Give Access</p>
+                        <p>Accept</p>
                       </Button>
                       <Button
                         mx={2}
                         onClick={(e) => handleRequest(e, data[1], false)}
+                        danger
                       >
                         <p>Decline</p>
                       </Button>

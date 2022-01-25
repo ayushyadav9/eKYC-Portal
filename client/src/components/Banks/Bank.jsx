@@ -1,16 +1,14 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import BankData from "./BankData";
 import InitialiseWeb3 from "../utils/web3.js";
-import Web3 from "web3";
+
 import VerifyClient from "./VerifyClient.jsx";
-import { Card,Button,Input,Modal } from "antd";
-import { UserOutlined } from '@ant-design/icons';
-import ClientData from "../Client/ClientData";
+import { Card, Button, Input, Modal, message } from "antd";
+import { UserOutlined } from "@ant-design/icons";
 import { baseURL } from "../../api";
 
-const Bank = () => {  
+const Bank = () => {
   const history = useHistory();
   const [dmr, setDmr] = useState(null);
   const [accounts, setAccounts] = useState(null);
@@ -18,8 +16,9 @@ const Bank = () => {
   const [pendingClientRequests, setPendingClientRequests] = useState([]);
   const [approvedClients, setApprovedClients] = useState([]);
   const [customerKycId, setCustomerKycId] = useState("");
-  const [isPopupOpen,setIsPopupOpen] = useState(false);
-  const [clientData,setClientData] = useState(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [clientData, setClientData] = useState(null);
+  const [isLoading, setisLoading] = useState(false);
 
   useEffect(() => {
     setup();
@@ -76,70 +75,75 @@ const Bank = () => {
 
   const handleSendRequest = (e) => {
     e.preventDefault();
+    setisLoading(true)
     if (dmr && accounts) {
       dmr.methods
         .addRequest(customerKycId)
         .send({ from: accounts[0] })
         .then((res) => {
-          console.log("Added succesfully!");
+          setisLoading(false)
+          message.success("Request sent!")
           getBankData();
           setCustomerKycId("");
         })
         .catch((err) => {
+          setisLoading(false)
+          message.error("Something went wrong!")
           console.log(err);
         });
     }
   };
 
-  const handleCancelRequest = (kycId) => {
-    if (dmr && accounts) {
-      dmr.methods
-        .removeRequest(kycId)
-        .send({ from: accounts[0] })
-        .then((res) => {
-          console.log("Removed succesfully!");
-          getBankData();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+  // const handleCancelRequest = (kycId) => {
+  //   if (dmr && accounts) {
+  //     dmr.methods
+  //       .removeRequest(kycId)
+  //       .send({ from: accounts[0] })
+  //       .then((res) => {
+  //         console.log("Removed succesfully!");
+  //         getBankData();
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   }
+  // };
+
+  const handelLogout = () => {
+    localStorage.removeItem("bankToken");
+    history.push("/");
   };
 
-  const kycVerdictHandler = (kycId, verdict) => {
-    
-  };
-
-  const togglePopup = (data) => {    
+  const togglePopup = (data) => {
     setClientData(data);
-    setIsPopupOpen((prev)=>{
+    setIsPopupOpen((prev) => {
       return !prev;
-    })    
+    });
   };
 
-  const handelStartvKYC = ()=>{
-    if(clientData){
+  const handelStartvKYC = () => {
+    if (clientData) {
       fetch(`${baseURL}/getSocket`, {
         method: "POST",
         headers: {
-        "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({kycId:clientData.kycId}),
+        body: JSON.stringify({ kycId: clientData.kycId }),
       })
-      .then((res) => res.json())
-      .then((result, err) => {
-        if (err) {
-          console.log(err);
-          return;
-        }
-        if(result.success){
-          history.push(`agent/video/${result.socket}`)
-        }
-        console.log(result)
-      });
+        .then((res) => res.json())
+        .then((result, err) => {
+          if (err) {
+            console.log(err);
+            return;
+          }
+          if (result.success) {
+            history.push(`agent/video/${result.socket}`);
+          }
+          console.log(result);
+        });
     }
-  }
-  const handelApproveWithoutvKYC = (verdict)=>{
+  };
+  const handelApproveWithoutvKYC = (verdict) => {
     if (dmr && accounts && clientData) {
       if (verdict) {
         dmr.methods
@@ -165,78 +169,154 @@ const Bank = () => {
           });
       }
     }
-  }
-  
+  };
 
   return (
     <>
-    <Modal title="Client Details" 
-          width={1100} 
-          style={{top:"20px"}} 
-          visible={isPopupOpen} 
-          onCancel={()=>setIsPopupOpen((prev)=>{return !prev;})} 
-          onOk={()=>{kycVerdictHandler()}}
-          footer={[
-            <Button type="primary" onClick={handelStartvKYC}>Start vKYC</Button>,
-            <Button type="primary" onClick={()=>handelApproveWithoutvKYC(true)}>Approve without vKYC</Button>,
-            <Button type="primary" onClick={()=>handelApproveWithoutvKYC(false)}>Reject without vKYC</Button>,
-            <Button key="back" onClick={()=>setIsPopupOpen((prev)=>{return !prev;})}>Cancel</Button>
-            ]}
+      <Modal
+        title="Client Details"
+        width={1100}
+        style={{ top: "20px" }}
+        visible={isPopupOpen}
+        onCancel={() =>
+          setIsPopupOpen((prev) => {
+            return !prev;
+          })
+        }
+        footer={[
+          <Button type="primary" onClick={handelStartvKYC}>
+            Start vKYC
+          </Button>,
+          <Button type="primary" onClick={() => handelApproveWithoutvKYC(true)}>
+            Approve without vKYC
+          </Button>,
+          <Button
+            type="primary"
+            onClick={() => handelApproveWithoutvKYC(false)}
           >
-        <VerifyClient kycVerdictHandler={kycVerdictHandler} dmr={dmr} accounts={accounts} data={clientData} togglePopup={togglePopup}/>
+            Reject without vKYC
+          </Button>,
+          <Button
+            key="back"
+            onClick={() =>
+              setIsPopupOpen((prev) => {
+                return !prev;
+              })
+            }
+          >
+            Cancel
+          </Button>,
+        ]}
+      >
+        <VerifyClient dmr={dmr} accounts={accounts} data={clientData} />
       </Modal>
-        <div style={{display:"flex", flexDirection:"column", margin: "0 auto", width:"80%"}}>
-          <div style={{display:"flex", justifyContent:"space-around", margin: "25px"}}>
-          <div style={{margin:"auto 0"}}>
-            <h1 style={{color:"rgb(14 21 246 / 85%)"}}>eKYC</h1>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          margin: "0 auto",
+          width: "80%",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            margin: "25px",
+          }}
+        >
+          <div style={{ margin: "auto 0" }}>
+            <h1 style={{ color: "rgb(14 21 246 / 85%)" ,fontWeight:"700"}}>vKYC</h1>
           </div>
-          <div style={{margin:"auto 0"}}>
-          <Button type="primary" ghost onClick={() => history.push("/bank/update")}>Add New Customer</Button>
-          <Button></Button>
-            <Button>Logout</Button>
+          <div style={{ margin: "auto 0" }}>
+            <Button
+              type="primary"
+              ghost
+            >
+              Hello Bank!
+            </Button>
+            <Button></Button>
+            <Button danger ghost onClick={handelLogout}>Logout</Button>
           </div>
-          </div>
+        </div>
 
         <Card title="Bank Details" my={"50px"} hoverable>
-        {bankDetails && <Card type="inner"  hoverable>
-            Name: {bankDetails.bName}<br/>
-            Address: {bankDetails.bAddress}<br/>
-            Etherium Address: {bankDetails.bWallet}
-        </Card>}
+          {bankDetails && (
+            <Card type="inner" hoverable>
+              Name: {bankDetails.bName}
+              <br />
+              Address: {bankDetails.bAddress}
+              <br />
+              Etherium Address: {bankDetails.bWallet}
+            </Card>
+          )}
         </Card>
-        <Card title="Request Access" style={{margin: '20px 0'}} hoverable>
-          <div style={{display:"flex"}}>
-        <Input 
-          size="large" 
-          placeholder="Client KYC ID" 
-          value={customerKycId} onChange={(e) => setCustomerKycId(e.target.value)} 
-          style={{width: '20%'}} 
-          prefix={<UserOutlined />} />
-        <Button size="large" onClick={handleSendRequest}>Send Request</Button>
-        </div>
-        </Card>
-
-        <Card title="Pending Requests" style={{marginBottom: '20px'}} hoverable>
-        {pendingClientRequests.length>0? pendingClientRequests.map((req, i) => {
-              return (
-                <Card.Grid style={{width:'25%',textAlign:'center', margin:"15px",fontSize:"15px",borderRadius:"9px"}} onClick={() => kycVerdictHandler(req.kycId)}>
-                  {req.name}
-                </Card.Grid>
-              );
-            }):"No pending requests"}
+        <Card title="Request Access" style={{ margin: "20px 0" }} hoverable>
+          <div style={{ display: "flex" }}>
+            <Input
+              size="large"
+              placeholder="Client KYC ID"
+              value={customerKycId}
+              onChange={(e) => setCustomerKycId(e.target.value)}
+              style={{ width: "20%" }}
+              prefix={<UserOutlined />}
+            />
+            <Button size="large" loading={isLoading} onClick={handleSendRequest}>
+              Send Request
+            </Button>
+          </div>
         </Card>
 
-        <Card title="Approved Requests" style={{marginBottom: '20px'}} hoverable>
-        {approvedClients.length>0 ? approvedClients.map((req, i) => {
+        <Card
+          title="Pending Requests"
+          style={{ marginBottom: "20px" }}
+          hoverable
+        >
+          {pendingClientRequests.length > 0
+            ? pendingClientRequests.map((req, i) => {
                 return (
-                  <Card.Grid style={{width:'25%',textAlign:'center', margin:"15px",fontSize:"15px",borderRadius:"9px"}} onClick={() => togglePopup(req)}>
+                  <Card.Grid
+                    style={{
+                      width: "25%",
+                      textAlign: "center",
+                      margin: "15px",
+                      fontSize: "15px",
+                      borderRadius: "9px",
+                    }}
+                  >
                     {req.name}
                   </Card.Grid>
                 );
-              }):"No approved requests"}
+              })
+            : "No pending requests"}
+        </Card>
+
+        <Card
+          title="Approved Requests"
+          style={{ marginBottom: "20px" }}
+          hoverable
+        >
+          {approvedClients.length > 0
+            ? approvedClients.map((req, i) => {
+                return (
+                  <Card.Grid
+                    style={{
+                      width: "25%",
+                      textAlign: "center",
+                      margin: "15px",
+                      fontSize: "15px",
+                      borderRadius: "9px",
+                    }}
+                    onClick={() => togglePopup(req)}
+                  >
+                    {req.name}
+                  </Card.Grid>
+                );
+              })
+            : "No approved requests"}
         </Card>
         <Card mt={20}></Card>
-    </div>
+      </div>
     </>
   );
 };
