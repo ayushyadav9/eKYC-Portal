@@ -8,7 +8,9 @@ const {
   getClientData,
   getBankList,
   request,
-  updateRecord
+  updateRecord,
+  updateSocket,
+  getSocket
 } = require("./controllers/userController");
 
 router.get("/", home);
@@ -18,6 +20,9 @@ router.get("/getClientData",passport.authenticate("jwt", { session: false }),get
 router.get("/getBankList", passport.authenticate("jwt", { session: false }), getBankList);
 router.post("/request", passport.authenticate("jwt", { session: false }), request);
 router.post("/updateRecord", passport.authenticate("jwt", { session: false }), updateRecord);
+router.post("/updateSocket", passport.authenticate("jwt", { session: false }), updateSocket);
+router.post("/getSocket", getSocket);
+
 
 router.get("*", notFound);
 

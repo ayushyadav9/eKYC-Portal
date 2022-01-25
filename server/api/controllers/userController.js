@@ -244,3 +244,44 @@ module.exports.updateRecord = async (req, res) => {
     });
   }
 };
+
+
+module.exports.updateSocket = async (req, res) => {
+  try {    
+    let user = req.user
+    await User.updateOne({ _id: req.user._id },{ $set: { socket: req.body.socket }});
+    res.status(200).json({
+      message: "Data Updated Successfully",      
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      message: "Something went wrong",
+      success: false,
+    });
+  }
+};
+
+module.exports.getSocket = async (req, res) => {
+  try {    
+    let user = await User.findOne({ kycId: req.body.kycId });
+    if(!user || !user.socket){
+      return res.status(400).json({
+        message: "No user found",      
+        success: false,
+      });
+    }
+    res.status(200).json({
+      socket : user.socket,
+      message: "Fetched Successfuly",      
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+      message: "Something went wrong",
+      success: false,
+    });
+  }
+};

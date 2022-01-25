@@ -1,20 +1,22 @@
-import React, { useState, useContext, useEffect, useRef, useLocation } from "react";
+import React, {
+  useState,
+  useContext,
+  useEffect,
+  useRef
+} from "react";
 import { Input, Button, Tooltip, Modal, message } from "antd";
 import Phone from "../../../assets/phone.gif";
 import Teams from "../../../assets/teams.mp3";
 import * as classes from "./Options.module.css";
-import { CopyToClipboard } from "react-copy-to-clipboard";
 import VideoContext from "../../../context/VideoContext";
 import Hang from "../../../assets/hang.svg";
-import { Flex, Box, Card, Heading, Form, Field, Loader, Text } from "rimble-ui";
 
 import {
   UserOutlined,
-  CopyOutlined,
-  InfoCircleOutlined,
   PhoneOutlined,
 } from "@ant-design/icons";
-import { socket } from "../../../context/VideoState";
+
+import { Card } from "antd";
 
 const Options = (props) => {
   console.log(props.clientId);
@@ -23,19 +25,15 @@ const Options = (props) => {
   const {
     call,
     callAccepted,
-    myVideo,
-    userVideo,
-    stream,
     name,
-    setName,
     callEnded,
-    me,
     callUser,
     leaveCall,
     answerCall,
-    otherUser,
     setOtherUser,
     leaveCall1,
+    myMicStatus,
+    updateMic,
   } = useContext(VideoContext);
 
   useEffect(() => {
@@ -90,6 +88,7 @@ const Options = (props) => {
               <img src={Hang} alt="hang up" style={{ height: "15px" }} />
               &nbsp; Hang up
             </Button>
+            
           ) : (
             <Button
               type="primary"
@@ -104,7 +103,14 @@ const Options = (props) => {
               Call
             </Button>
           )}
+            <Button onClick={() => {updateMic()}} style={{ marginLeft: "15px" }} ><i
+              className={`fa fa-microphone${myMicStatus ? "" : "-slash"}`}
+              aria-label={`${myMicStatus ? "mic on" : "mic off"}`}
+              aria-hidden="true"
+            ></i>
+            </Button>
         </div>
+
 
         {call.isReceivingCall && !callAccepted && (
           <>
@@ -159,23 +165,38 @@ const Options = (props) => {
           </>
         )}
       </div>
-      <div className="screenshot">
-        <canvas ref={props.canvasEle} style={{ display: "none" }}></canvas>
-        <div className="preview">
-          <img className="preview-img" src={props.imageURL} ref={props.imageEle} />
-        </div>
-      </div>
-      <div className="kycVerdict">
-        <Flex>
-          <Button variant="contained" onClick={props.acceptKyc}>
+      <canvas ref={props.canvasEle} style={{ display: "none" }}></canvas>
+                  
+      {props.imageURL && callEnded && 
+      <Modal
+        title="Screenshot"
+        visible={true}
+        onOk={() => showModal(false)}
+        onCancel={handleCancel}
+        footer={null}
+      >
+      <Card
+        style={{ width: 300,margin: "auto" }}
+        cover={
+          <img alt="example" src={props.imageURL}/>
+        }
+        actions={[
+          <Button
+            variant="contained"
+            onClick={() => props.handleVerdict("accepted")}
+          >
             Accept
-          </Button>
-          <Button variant="contained" onClick={props.rejectKyc}>
+          </Button>,
+          <Button
+            variant="contained"
+            onClick={() => props.handleVerdict("rejected")}
+          >
             Reject
           </Button>
-        </Flex>
-        <span>{props.message}</span>
-      </div>
+        ]}
+      >
+      </Card>
+      </Modal>}
     </>
   );
 };

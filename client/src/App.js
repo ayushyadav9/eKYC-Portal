@@ -1,7 +1,5 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from "./components/Home";
-import { theme } from "rimble-ui";
-import { ThemeProvider } from "styled-components";
 import Client from "./components/Client/Client";
 import UpdateData from "./components/Banks/UpdateData";
 import Bank from "./components/Banks/Bank";
@@ -17,15 +15,10 @@ import VideoPageAgent from "./components/VideoCall/VideoPageAgent";
 import "antd/dist/antd.css";
 import "font-awesome/css/font-awesome.min.css";
 
-const customTheme = {
-  ...theme,
-};
 
-customTheme.colors.primary = "#0358d9ff";
 
 function App() {
   return (
-    <ThemeProvider theme={customTheme}>
       <Router>
         <Switch>
           <Route exact path="/" component={Home} />
@@ -41,7 +34,6 @@ function App() {
           <Route exact path="/agent/video/:clientId" component={VideoPageAgent} />
         </Switch>
       </Router>
-    </ThemeProvider>
   );
 }
 

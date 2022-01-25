@@ -1,65 +1,69 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import {Flex, Box, Card, Heading, Form, Field, Radio, Button, Image, Loader} from "rimble-ui";
 import { baseURL } from "../api";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+// import { Button, Form } from "react-bootstrap";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useHistory } from "react-router-dom";
 
 
 const Home = () => {
-  const [loginData, setloginData] = useState({email:"",password:"",sender:""})
-  const [isLoading, setisLoading] = useState(false)
-  const history = useHistory()
-  const handelLogin = (e)=>{
-    e.preventDefault()
-    if(loginData.sender==="bank" || loginData.sender==="client"){
-      setisLoading(true)
+  const [loginData, setloginData] = useState({
+    email: "",
+    password: "",
+    sender: "",
+  });
+  const [isLoading, setisLoading] = useState(false);
+  const history = useHistory();
+  const handelLogin = (e) => {
+    e.preventDefault();
+    if (loginData.sender === "bank" || loginData.sender === "client") {
+      setisLoading(true);
       fetch(`${baseURL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(loginData)
+        body: JSON.stringify(loginData),
       })
-      .then((res) => res.json())
-      .then((result,err) => {
-        setisLoading(false)
-        if(err){
-          console.log(err)
-          toast.error('Something went wrong')
-          return
-        }
-        if(result.success){
-          toast.success(result.message)
-          localStorage.setItem("userToken",result.data.token)
-          history.push(`/${loginData.sender}`)
-        }
-        else{
-          toast.info(result.message)
-        }
-        console.log(result)
-      });
+        .then((res) => res.json())
+        .then((result, err) => {
+          setisLoading(false);
+          if (err) {
+            console.log(err);
+            toast.error("Something went wrong");
+            return;
+          }
+          if (result.success) {
+            toast.success(result.message);
+            localStorage.setItem(loginData.sender==='client'?"userToken":"bankToken", result.data.token);
+            history.push(`/${loginData.sender}`);
+          } else {
+            toast.info(result.message);
+          }
+          console.log(result);
+        });
+    } else {
+      toast.info("Please select yout role!");
     }
-    else{
-      toast.info('Please select yout role!')
-    }
-  }
+  };
 
   return (
     <>
-    <ToastContainer
-      theme="dark" 
-      position="top-right"
-      autoClose={5000}
-      hideProgressBar={false}
-      newestOnTop={false}
-      closeOnClick
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
+      <ToastContainer
+        theme="dark"
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
       />
-    <Flex height={"100vh"}>
+      
+      <Flex height={"100vh"}>
       <Box mx={"auto"} my={"auto"} width={[1, 1 / 2, 1 / 3, 1 / 4]}>
 
         <Flex px={2} mx={"auto"} justifyContent="space-between">

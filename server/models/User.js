@@ -16,6 +16,10 @@ const UserSchema = new Schema({
     required: true,
     unique: true,
   },
+  socket: {
+    type: String,
+    unique: true,
+  },
   timestamp: {
     type: Date,
     default: Date.now,

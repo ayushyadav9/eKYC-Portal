@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { Flex, Box, Card, Heading, Form, Field, Button, Loader, Text } from "rimble-ui";
-import InitialiseWeb3 from "../utils/web3.js";
+import { Button, Form, Input, DatePicker, Select } from "antd";
 import { baseURL } from "../../api";
 import { ToastContainer, toast } from "react-toastify";
 const IPFS = require("ipfs-api");
-const ipfs = new IPFS({ host: "ipfs.infura.io", port: 5001, protocol: "https" });
+const ipfs = new IPFS({
+  host: "ipfs.infura.io",
+  port: 5001,
+  protocol: "https",
+});
 
 const NewClient = () => {
   const history = useHistory();
-  const [dmr, setDmr] = useState(null);
-  const [accounts, setAccounts] = useState(null);
   const [isLoading, setisLoading] = useState(false);
-  const [buffer, setbuffer] = useState([0,1,2]);
+  const [buffer, setbuffer] = useState([0, 1, 2]);
   const [message, setMessage] = useState(null);
-  const [geo,setGeo] = useState("");
+  const [geo, setGeo] = useState("");
 
   const [formData, setformData] = useState({
     name: "",
@@ -27,19 +28,10 @@ const NewClient = () => {
   });
 
   useEffect(() => {
-    setup();
-  }, []);
-
-  const setup = async () => {
-    let [tempDmr, tempAcc] = await InitialiseWeb3();
-    setDmr(tempDmr);
-    setAccounts(tempAcc);
-    console.log(tempAcc);
-
-    navigator.geolocation.getCurrentPosition(function(position) {
-        setGeo(position.coords.latitude+","+position.coords.longitude);
+    navigator.geolocation.getCurrentPosition(function (position) {
+      setGeo(position.coords.latitude + "," + position.coords.longitude);
     });
-  };
+  }, []);
 
   const handelSubmit = (e) => {
     e.preventDefault();
@@ -51,202 +43,170 @@ const NewClient = () => {
         setMessage("Something went wrong!");
         return;
       }
-      setMessage("Updated Successfuly!");      
-      console.log(result)
-      addCustomer(result[0].hash, result[1].hash,result[2].hash);
+      setMessage("Updated Successfuly!");
+      console.log(result);
+      addCustomer(result[0].hash, result[1].hash, result[2].hash);
     });
   };
 
-  const addCustomer = async (panIPFS,aadharIPFS,selfieIPFS) => {
+  const addCustomer = async (panIPFS, aadharIPFS, selfieIPFS) => {
+    let data = { ...formData, panIPFS, aadharIPFS, selfieIPFS, geo };
+    console.log(data);
 
-    if (dmr && accounts) {
-        
-       let data = {...formData,panIPFS,aadharIPFS,selfieIPFS,geo};
-       console.log(data);
-
-        fetch(`${baseURL}/register`, {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-            formData: data,    
-            sender: "client",
-            }),
-        })
-        .then((res) => res.json())
-        .then((result, err) => {
-          setisLoading(false);
-          if (err) {
-            console.log(err);
-            toast.error("Something went wrong");
-            return;
-          }
-        });
-    }
+    fetch(`${baseURL}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        formData: data,
+        sender: "client",
+      }),
+    })
+      .then((res) => res.json())
+      .then((result, err) => {
+        setisLoading(false);
+        if (err) {
+          console.log(err);
+          toast.error("Something went wrong");
+          return;
+        }
+      });
   };
 
-  const captureFile = (e,i) => {
+  const captureFile = (e, i) => {
     const file = e.target.files[0];
     const reader = new window.FileReader();
     reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
-      let buf = buffer
-      console.log(e,i)
-      buf[i] = Buffer(reader.result)
+      let buf = buffer;
+      console.log(e, i);
+      buf[i] = Buffer(reader.result);
       setbuffer(buf);
     };
   };
 
   return (
-    <Flex height={"100vh"}>
-      <Box mx={"auto"} my={"auto"} width={[1, 9 / 15, 7 / 15]}>
-        <Flex px={2} mx={"auto"} justifyContent="space-between">
-          <Box my={"auto"}>
-            <Heading as={"h2"} color={"primary"}>
-              Update Details
-            </Heading>
-          </Box>
-          <Box my={"auto"}>
-            <Button
-              onClick={() => {
-                history.goBack();
-              }}
-            >
-              Back
-            </Button>
-          </Box>
-        </Flex>
-        <Form id="update" onSubmit={handelSubmit}>
-          <Card mb={20}>
-            <Flex mx={-3} flexWrap={"wrap"}>
-              <Box width={1} px={3}>
-                <Field label="Name" width={1}>
-                  <Form.Input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={(e) => setformData({ ...formData, name: e.target.value })}
-                    required
-                    width={1}
-                  />
-                </Field>
-              </Box>
-              <Box width={1} px={3}>
-                <Field label="E-Mail" width={1}>
-                  <Form.Input
-                    type="text"
-                    name="email"
-                    value={formData.email}
-                    onChange={(e) => setformData({ ...formData, email: e.target.value })}
-                    required
-                    width={1}
-                  />
-                </Field>
-              </Box>
-              <Box width={1} px={3}>
-                <Field label="Address" width={1}>
-                  <Form.Input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={(e) =>
-                      setformData({ ...formData, address: e.target.value })
-                    }
-                    required
-                    width={1}
-                  />
-                </Field>
-              </Box>
-              <Box width={1} px={3}>
-                <Field label="Phone No." width={1}>
-                  <Form.Input
-                    type="text"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={(e) => setformData({ ...formData, phone: e.target.value })}
-                    required
-                    width={1}
-                  />
-                </Field>
-              </Box>
-              <Flex px={1} mx={"100px"}>
-                <Box width={1} px={3}>
-                  <Field label="Date of Birth" width={1}>
-                    <Form.Input
-                      type="date"
-                      name="dob"
-                      value={formData.dob}
-                      onChange={(e) => setformData({ ...formData, dob: e.target.value })}
-                      required
-                      width={1}
-                    />
-                  </Field>
-                </Box>
-                <Box width={1} px={3}>
-                  <Field label="Gender" width={1}>
-                    <Form.Input
-                      type="text"
-                      name="gender"
-                      value={formData.gender}
-                      onChange={(e) =>
-                        setformData({ ...formData, gender: e.target.value })
-                      }
-                      required
-                      width={1}
-                    />
-                  </Field>
-                </Box>
-              </Flex>
-              <Box width={1} px={3}>
-                <Field label="PAN Number" width={1}>
-                  <Form.Input
-                    type="text"
-                    name="PANno"
-                    value={formData.PANno}
-                    onChange={(e) => setformData({ ...formData, PANno: e.target.value })}
-                    required
-                    width={1}
-                  />
-                </Field>
-              </Box>
-              <Flex px={1} mx={"100px"}>
-                <Box width={1} px={3}>
-                  <Field label="PAN Card" width={1}>
-                    <Form.Input type="file" required width={1} onChange={(e)=>captureFile(e,0)} />
-                  </Field>
-                </Box>
-                <Box width={1} px={3}>
-                  <Field label="Aadhar Card" width={1}>
-                    <Form.Input type="file" required width={1} onChange={(e)=>captureFile(e,1)} />
-                  </Field>
-                </Box>
-                <Box width={1} px={3}>
-                  <Field label="Selfie" width={1}>
-                    <Form.Input type="file" required width={1} onChange={(e)=>captureFile(e,2)} />
-                  </Field>
-                </Box>
-              </Flex>
-            </Flex>
-          </Card>
-          <Flex mx={-3} alignItems={"center"}>
-            <Box px={3}>
-              <Button type="submit" mt={2} minWidth={"150px"}>
-                {isLoading ? <Loader color="white" /> : <p>Update</p>}
-              </Button>
-            </Box>
-            {message && (
-              <Box px={3}>
-                <Text fontSize={"18px"}>{message}</Text>
-              </Box>
-            )}
-          </Flex>
-        </Form>
-        <Card mt={20} mb={1}>
-          © 2021-2022 Yadav Coin. All Rights Reserved.
-        </Card>
-      </Box>
-    </Flex>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        margin: "0 auto",
+        width: "80%",
+        justifyContent:"center"
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-around",
+          margin: "25px",
+        }}
+      >
+        <div style={{ margin: "auto 0" }}>
+          <h1 style={{ color: "rgb(14 21 246 / 85%)" }}>vKYC</h1>
+        </div>
+        <div style={{ margin: "auto 0" }}>
+          <Button></Button>
+          <Button type="primary">Back</Button>
+        </div>
+      </div>
+      <Form
+        layout="vertical"
+        labelCol={{ span: 4 }}
+        wrapperCol={{ span: 14 }}
+        size={"large"}
+        width={100}
+      >
+        <Form.Item label="Name">
+          <Input
+            type="text"
+            value={formData.name}
+            onChange={(e) => setformData({ ...formData, name: e.target.value })}
+            required
+          />
+        </Form.Item>
+        <Form.Item label="Email">
+          <Input
+            type="email"
+            value={formData.email}
+            onChange={(e) =>
+              setformData({ ...formData, email: e.target.value })
+            }
+            required
+          />
+        </Form.Item>
+        <Form.Item label="Address">
+          <Input
+            type="text"
+            value={formData.address}
+            onChange={(e) =>
+              setformData({ ...formData, address: e.target.value })
+            }
+            required
+          />
+        </Form.Item>
+        <Form.Item label="Phone">
+          <Input
+            type="text"
+            value={formData.phone}
+            onChange={(e) =>
+              setformData({ ...formData, phone: e.target.value })
+            }
+            required
+          />
+        </Form.Item>
+        <Form.Item label="DOB">
+          <DatePicker
+            value={formData.dob}
+            onChange={(e) => setformData({ ...formData, dob: e.target.value })}
+          />
+        </Form.Item>
+        <Form.Item label="Gender">
+          <Select>
+            <Select.Option value="m">Male</Select.Option>
+            <Select.Option value="f">Female</Select.Option>
+            <Select.Option value="o">Others</Select.Option>
+          </Select>
+        </Form.Item>
+        <Form.Item label="PAN Number">
+          <Input
+            type="text"
+            value={formData.PANno}
+            onChange={(e) =>
+              setformData({ ...formData, PANno: e.target.value })
+            }
+            required
+          />
+        </Form.Item>
+    
+
+      <Form.Item label="PAN Card">
+        <Input
+          type="file"
+          required
+          width={1}
+          onChange={(e) => captureFile(e, 0)}
+        />
+      </Form.Item>
+      <Form.Item label="Aadhar Card">
+        <Input
+          type="file"
+          required
+          width={1}
+          onChange={(e) => captureFile(e, 1)}
+        />
+      </Form.Item>
+      <Form.Item label="Selfie">
+        <Input
+          type="file"
+          required
+          width={1}
+          onChange={(e) => captureFile(e, 2)}
+        />
+      </Form.Item>
+      </Form>
+    </div>
   );
 };
 

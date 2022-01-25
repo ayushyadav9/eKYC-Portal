@@ -34,11 +34,10 @@ const VideoState = ({ children }) => {
       .getUserMedia({ video: true, audio: true })
       .then((currentStream) => {
         setStream(currentStream);
-        myVideo.current.srcObject = currentStream;
+        if(myVideo.current){
+          myVideo.current.srcObject = currentStream;
+        }
       });
-    if (localStorage.getItem("name")) {
-      setName(localStorage.getItem("name"));
-    }
     socket.on("me", (id) => setMe(id));
 
     socket.on("updateUserMedia", ({ type, currentMediaStatus }) => {
@@ -70,9 +69,6 @@ const VideoState = ({ children }) => {
     });
   }, []);
 
-  // useEffect(() => {
-  //   console.log(chat);
-  // }, [chat]);
 
   const answerCall = () => {
     setCallAccepted(true);
@@ -90,7 +86,9 @@ const VideoState = ({ children }) => {
     });
 
     peer.on("stream", (currentStream) => {
-      userVideo.current.srcObject = currentStream;
+      if(userVideo.current){
+        userVideo.current.srcObject = currentStream;
+      }
     });
 
     peer.signal(call.signal);
@@ -174,7 +172,7 @@ const VideoState = ({ children }) => {
 
     connectionRef.current.destroy();
     socket.emit("endCall", { id: otherUser });
-    window.location.reload();
+    // window.location.reload();
   };
 
   const leaveCall1 = () => {

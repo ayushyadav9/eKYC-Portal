@@ -10,7 +10,7 @@ import VideoOff from "../../../assets/video-off.svg";
 // import Profile from "../../assets/profile.svg";
 import Msg_Illus from "../../../assets/msg_illus.svg";
 import Msg from "../../../assets/msg.svg";
-import { UserOutlined, MessageOutlined } from "@ant-design/icons";
+import { UserOutlined, MessageOutlined, RedoOutlined } from "@ant-design/icons";
 
 import { socket } from "../../../context/VideoState";
 
@@ -83,25 +83,25 @@ const Video = (props) => {
   return (
     <>
       <div className="grid">
-        {stream ? (
+        {callAccepted && !callEnded?  (
           <div
             style={{ textAlign: "center" }}
             className="card"
             id={callAccepted && !callEnded ? "video1" : "video3"}
           >
             <div style={{ height: "2rem" }}>
-              <h3>{myVdoStatus && name}</h3>
+              <h3>{userVdoStatus && name?name:"Client Name"}</h3>
             </div>
             <div className="video-avatar-container">
               <video
                 playsInline
                 muted
                 onClick={fullScreen}
-                ref={myVideo}
+                ref={userVideo}
                 autoPlay
                 className="video-active"
                 style={{
-                  opacity: `${myVdoStatus ? "1" : "0"}`,
+                  opacity: `${userVdoStatus ? "1" : "0"}`,
                 }}
               />
 
@@ -109,7 +109,7 @@ const Video = (props) => {
                 style={{
                   backgroundColor: "#116",
                   position: "absolute",
-                  opacity: `${myVdoStatus ? "-1" : "2"}`,
+                  opacity: `${userVdoStatus ? "-1" : "2"}`,
                 }}
                 size={98}
                 icon={!name && <UserOutlined />}
@@ -119,20 +119,6 @@ const Video = (props) => {
             </div>
 
             <div className="iconsDiv">
-              <div
-                className="icons"
-                onClick={() => {
-                  updateMic();
-                }}
-                tabIndex="0"
-              >
-                <i
-                  className={`fa fa-microphone${myMicStatus ? "" : "-slash"}`}
-                  style={{ transform: "scaleX(-1)" }}
-                  aria-label={`${myMicStatus ? "mic on" : "mic off"}`}
-                  aria-hidden="true"
-                ></i>
-              </div>
 
               {callAccepted && !callEnded && (
                 <div
@@ -185,17 +171,9 @@ const Video = (props) => {
                   onClick={() => props.clickScreenshot(userVideo)}
                   tabIndex="0"
                 >
-                  <img src={ScreenShotIcon} alt="screenshot icon" />
+                  <img src={ScreenShotIcon}  alt="screenshot icon" />
                 </div>
               )}
-
-              <div className="icons" onClick={() => updateVideo()} tabIndex="0">
-                {myVdoStatus ? (
-                  <img src={VideoIcon} alt="video on icon" />
-                ) : (
-                  <img src={VideoOff} alt="video off icon" />
-                )}
-              </div>
             </div>
           </div>
         ) : (
@@ -206,52 +184,23 @@ const Video = (props) => {
           </div>
         )}
 
-        {callAccepted && !callEnded && userVideo && (
-          <div className="card2" style={{ textAlign: "center" }} id="video2">
-            <div style={{ height: "2rem" }}>
-              <h3>{userVdoStatus && (call.name || userName)}</h3>
-            </div>
-
-            <div className="video-avatar-container">
-              <video
-                playsInline
-                ref={userVideo}
-                onClick={fullScreen}
-                autoPlay
-                className="video-active"
-                style={{
-                  opacity: `${userVdoStatus ? "1" : "0"}`,
-                }}
-              />
-
-              <Avatar
-                style={{
-                  backgroundColor: "#116",
-                  position: "absolute",
-                  opacity: `${userVdoStatus ? "-1" : "2"}`,
-                }}
-                size={98}
-                icon={!(userName || call.name) && <UserOutlined />}
-              >
-                {userName || call.name}
-              </Avatar>
-              {!userMicStatus && (
-                <i
-                  style={{
-                    position: "absolute",
-                    top: "0",
-                    left: "0",
-                    padding: "0.3rem",
-                    backgroundColor: "#fefefebf",
-                  }}
-                  className="fad fa-volume-mute fa-2x"
-                  aria-hidden="true"
-                  aria-label="microphone muted"
-                ></i>
-              )}
-            </div>
+      {props.SS && (
+          <div style={{ textAlign: "center" }}className="card"id={callAccepted && !callEnded ? "video1" : "video3"}>
+          <div style={{ height: "2rem" }}>
+            <h3>{userVdoStatus && name?name:"Screenshot"}</h3>
           </div>
-        )}
+            <img alt="example" style={{ maxWidth:'100%'}} src={props.imageURL}/>
+
+            <div className="iconsDiv">
+              {callAccepted && !callEnded && (
+                <div className="icons" onClick={() => {props.clickScreenshot(userVideo)}}tabIndex="0">
+                  <RedoOutlined />
+                  {/* <img src={Msg} alt="chat icon" /> */}
+                </div>
+              )}
+              </div>
+          </div>
+        )}  
       </div>
     </>
   );

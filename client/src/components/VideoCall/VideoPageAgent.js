@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { Flex, Box, Card, Heading, Form, Field, Button, Loader, Text } from "rimble-ui";
 import Video from "./Video/VideoAgent";
 import VideoState from "../../context/VideoState";
 import { baseURL } from "../../api";
 import Options from "./options/OptionsAgent";
 import { ToastContainer, toast } from "react-toastify";
 import "./VideoPage.css";
-import { FileImageFilled } from "@ant-design/icons";
 const IPFS = require("ipfs-api");
 const ipfs = new IPFS({ host: "ipfs.infura.io", port: 5001, protocol: "https" });
 
@@ -17,6 +15,7 @@ const VideoPage = (props) => {
   const [imageFile, setImageFile] = useState();
   const [message, setMessage] = useState("");
   const [buffer, setBuffer] = useState([]);
+  const [SS, setSS] = useState(false);
 
   useEffect(() => {
     if (!navigator.onLine) toast.error("Please connect to the internet!");
@@ -26,33 +25,16 @@ const VideoPage = (props) => {
     setImageFile(dataURLtoFile(imageURL, "vidScreenshot"));
   }, [imageURL]);
 
-  // useEffect(() => {
-  //   var cookies = document.cookie.split(";");
-
-  //   for (var i = 0; i < cookies.length; i++) {
-  //     var cookie = cookies[i];
-  //     var eqPos = cookie.indexOf("=");
-  //     var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-  //     document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-  //   }
-  // }, []);
 
   const clickScreenshot = async (userVideo) => {
-    // Get the exact size of the video element.
     const width = userVideo.current.videoWidth;
     const height = userVideo.current.videoHeight;
-
-    // get the context object of hidden canvas
     const ctx = canvasEle.current.getContext("2d");
-
-    // Set the canvas to the same dimensions as the video.
     canvasEle.current.width = width;
     canvasEle.current.height = height;
 
-    // Draw the current frame from the video on the canvas.
     ctx.drawImage(userVideo.current, 0, 0, width, height);
 
-    // Get an image dataURL from the canvas.
     let imageDataURL = canvasEle.current.toDataURL("image/png");
     setImageURL(imageDataURL);
     imageDataURL = dataURLtoFile(imageDataURL,"userSelfie.png")
@@ -61,6 +43,7 @@ const VideoPage = (props) => {
     reader.onloadend = () => {
       setBuffer([Buffer(reader.result)]);
     };
+    setSS(true)
   };
 
   const dataURLtoFile = (dataurl, filename) => {
@@ -97,10 +80,11 @@ const VideoPage = (props) => {
           toast.error("Something went wrong");
           return;
         }
+        console.log(result)
       });
   };
 
-  const acceptKyc = () => {
+  const handleVerdict = (verd) => {
     
     ipfs.files.add(buffer, (error, result) => {
       // setisLoading(false);
@@ -114,28 +98,11 @@ const VideoPage = (props) => {
       console.log(result);
       updateRecord(
         "video_kyc",
-        JSON.stringify({ iamge: result[0].hash, verdict: "accepted" })
+        JSON.stringify({ image: result[0].hash, verdict: verd })
       );
     });
   };
 
-  const rejectKyc = () => {
-    ipfs.files.add([imageURL], (error, result) => {
-      // setisLoading(false);
-      if (error) {
-        console.error(error);
-        setMessage("Something went wrong!");
-        return;
-      } else {
-        setMessage("Updated Successfuly!");
-        console.log(result);
-        updateRecord(
-          "video_kyc",
-          JSON.stringify({ iamge: result[0].hash, verdict: "rejected" })
-        );
-      }
-    });
-  };
 
   return (
     <div className="videoPageBody">
@@ -152,15 +119,19 @@ const VideoPage = (props) => {
         pauseOnHover
       />
       <VideoState>
-        <Video clickScreenshot={clickScreenshot} />
+        <Video 
+          clickScreenshot={clickScreenshot} 
+          SS={SS}
+          imageURL={imageURL}
+        />
         <Options
           clientId={props.match.params.clientId}
           canvasEle={canvasEle}
           imageEle={imageEle}
           imageURL={imageURL}
-          acceptKyc={acceptKyc}
-          rejectKyc={rejectKyc}
+          handleVerdict={handleVerdict}
           message={message}
+          SS={SS}
         />
       </VideoState>
     </div>

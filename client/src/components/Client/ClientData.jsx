@@ -1,76 +1,64 @@
 import React from "react";
-import { Flex, Box, Heading, Text, Image } from "rimble-ui";
+import { Card } from 'antd';
+import { Image, Row, Col } from 'antd';
+import { Descriptions } from 'antd';
+import { Typography } from 'antd';
+import {CopyTwoTone} from '@ant-design/icons';
 
 const ClientData = ({ userData }) => {
+  const { Text} = Typography;
   return (
-    <Box bg={"rgba(108, 160, 249, 0.2)"} p={3} borderRadius={1}>
-      <Flex my={1}>
-        <Box width={[1, 1 / 2, 1 / 3, 1 / 6]}>
-          <Heading as={"h4"} my={"auto"}>
-            User Details
-          </Heading>
-        </Box>
-        <Box width={1}>
-          
-          <Flex>
-            <Box width={"400px"}>
-              <Image
-                alt="Selfie img"                
-                src={`https://ipfs.io/ipfs/${userData.records[2][1]}`}
-              />
-            </Box>
-            <Box mx={"100px"}>
-              <Text>
-                <strong>Name: </strong> {userData.name}
-              </Text>
-              <Text>
-                <strong>Gender: </strong> {userData.gender}
-              </Text>
-              <Text>
-                <strong>Phone: </strong> {userData.phone}
-              </Text>
-              <Text>
-                <strong>Address: </strong> {userData.address}
-              </Text>
-              <Text>
-                <strong>Email: </strong> {userData.email}
-              </Text>
-              <Text>
-                <strong>KYC-Id: </strong> {userData.kycId}
-              </Text>
-              <Text>
-                <strong>KYC Status: </strong>{" "}
-                {userData.kycStatus ? "Approved" : "Not Approved"}
-              </Text>
-            </Box>  
-          </Flex>
-          
-          <Flex>
-            <Box>
-              <Text>
-                <strong>Aadhar Card: </strong>
-              </Text>
-              <Image
-                alt="aadhar img"
-                width={0.5}
-                src={`https://ipfs.io/ipfs/${userData.records[0][1]}`}
-              />
-            </Box>
-            <Box>
-              <Text>
-                <strong>PAN Card: </strong>
-              </Text>
-              <Image
-                alt="pan img"
-                width={0.5}
-                src={`https://ipfs.io/ipfs/${userData.records[1][1]}`}
-              />
-            </Box>
-          </Flex>
+    <>
+      <div className="site-card-wrapper">
+        <Row gutter={16}>
+          <Col span={8}>
+            <Row span={6}>
+              <Card title="Profile Picture" bordered={false}>
+                <Image width={300}
+                  alt="Loading....."
+                  src={`https://ipfs.io/ipfs/${userData.records[2][1]}`}
+                />
+              </Card>
+            </Row>
+            <Row span={2}>
+              <Card>        
+                <Row> 
+                  <h1> KYC id : <Text type={userData.kycStatus ? "success" : "danger"}>{userData.kycId}</Text></h1>   
+                  <CopyTwoTone style={{ fontSize: '150%'}} onClick={() =>  navigator.clipboard.writeText(`${userData.kycId}`)}/>                                      
+                </Row>                        
+              </Card>         
+            </Row>
+          </Col>
+          <Col span={8}>
+            <Card title="Basic Details" bordered={true}>
 
-        </Box>
-      </Flex>
-    </Box>
+              <Descriptions title="User Info" layout="horizontal">
+                <Descriptions.Item label="Name " span={3}>{userData.name}</Descriptions.Item>
+                <Descriptions.Item label="Gender " span={3}>{userData.gender}</Descriptions.Item>
+                <Descriptions.Item label="Phone " span={3}>{userData.phone}</Descriptions.Item>
+                <Descriptions.Item label="Address " span={3}>{userData.address}</Descriptions.Item>
+                <Descriptions.Item label="Email " span={3}>{userData.email}</Descriptions.Item>
+                <Descriptions.Item label="KYC Id " span={3}>{userData.kycId}</Descriptions.Item>
+                <Descriptions.Item label="KYC Status "><strong>{userData.kycStatus ? "Approved" : "Not Approved"}</strong></Descriptions.Item>
+              </Descriptions>
+              
+            </Card>
+          </Col>
+          <Col span={8}>
+            <Card title="Documents" bordered={false}>
+              <Image.PreviewGroup>
+                <Image width={300} src={`https://ipfs.io/ipfs/${userData.records[0][1]}`} />
+                <Image
+                  width={300}
+                  src={`https://ipfs.io/ipfs/${userData.records[1][1]}`}
+                />
+              </Image.PreviewGroup>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+
+    </>
   );
 };
 

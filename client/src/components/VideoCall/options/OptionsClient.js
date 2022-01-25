@@ -1,46 +1,28 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
-import { Input, Button, Tooltip, Modal, message } from "antd";
+import { Input, Button, Modal, message } from "antd";
 import Phone from "../../../assets/phone.gif";
 import Teams from "../../../assets/teams.mp3";
 import * as classes from "./Options.module.css";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import VideoContext from "../../../context/VideoContext";
-import Hang from "../../../assets/hang.svg";
-import {
-  TwitterIcon,
-  TwitterShareButton,
-  WhatsappShareButton,
-  WhatsappIcon,
-  FacebookIcon,
-  FacebookShareButton,
-} from "react-share";
+
 import {
   UserOutlined,
   CopyOutlined,
-  InfoCircleOutlined,
   PhoneOutlined,
 } from "@ant-design/icons";
-import { socket } from "../../../context/VideoState";
+import { baseURL } from "../../../api";
 
 const Options = () => {
-  const [idToCall, setIdToCall] = useState("");
-
   const [isModalVisible, setIsModalVisible] = useState(false);
   const Audio = useRef();
   const {
     call,
     callAccepted,
-    myVideo,
-    userVideo,
-    stream,
     name,
     setName,
-    callEnded,
     me,
-    callUser,
-    leaveCall,
     answerCall,
-    otherUser,
     setOtherUser,
     leaveCall1,
   } = useContext(VideoContext);
@@ -50,6 +32,8 @@ const Options = () => {
       Audio?.current?.play();
     } else Audio?.current?.pause();
   }, [isModalVisible]);
+
+  
 
   const showModal = (showVal) => {
     setIsModalVisible(showVal);
