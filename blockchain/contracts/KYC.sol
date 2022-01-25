@@ -232,7 +232,7 @@ contract KYC {
     struct KycVerdict {
         string bName;
         string remarks;
-        string status;
+        uint status;
         uint time;
     }
 
@@ -248,7 +248,7 @@ contract KYC {
         address[] requestList;
         address[] approvedBanks;
         KycVerdict[] kycHistory;
-        bool kycStatus;
+        uint kycStatus;
     }
 
     string[] private CustomerList;
@@ -280,7 +280,7 @@ contract KYC {
         Customers[_kycId].gender=_gender;
         Customers[_kycId].dob=_dob;
         Customers[_kycId].PAN = _PAN;
-        Customers[_kycId].kycStatus = false;
+        Customers[_kycId].kycStatus = 0;
         Customers[_kycId].records.push(Records("aadhar", ipfs_aadhar, block.timestamp));
         Customers[_kycId].records.push(Records("pan", ipfs_pan, block.timestamp));
         Customers[_kycId].records.push(Records("selfie", ipfs_selfie, block.timestamp));
@@ -341,17 +341,19 @@ contract KYC {
     //     return(bName, IPFS);
     // }
     
-    function approveKyc(string memory _kycId, string memory bName, string memory remarks, uint timeStamp) public onlyBank{
+    /*
+        Verdict Id - Status
+        --------------------------------
+        0          - Not Initiated
+        1          - Accepted
+        2          - Rejected
+        3          - Revoked Needs Update
+    */
+    
+    function updateKycStatus(string memory _kycId, string memory bName, string memory remarks, uint timeStamp, uint verdict) public onlyBank{
         require(isCustomer[_kycId], "Not a registered Customer!");
-        Customers[_kycId].kycHistory.push(KycVerdict(bName, remarks, "Approved", timeStamp));
-        Customers[_kycId].kycStatus = true;
-        removeFromPendingList(_kycId);
-    }
-
-    function rejectKyc(string memory _kycId, string memory bName, string memory remarks, uint timeStamp) public onlyBank{
-        require(isCustomer[_kycId], "Not a registered Customer!");
-        Customers[_kycId].kycHistory.push(KycVerdict(bName, remarks, "Rejected", timeStamp));
-        Customers[_kycId].kycStatus = false;
+        Customers[_kycId].kycHistory.push(KycVerdict(bName, remarks, verdict, timeStamp));
+        Customers[_kycId].kycStatus = verdict;
         removeFromPendingList(_kycId);
     }
 
