@@ -16,9 +16,11 @@ const Bank = () => {
   const [pendingClientRequests, setPendingClientRequests] = useState([]);
   const [approvedClients, setApprovedClients] = useState([]);
   const [customerKycId, setCustomerKycId] = useState("");
+  const [customerKycIdData, setCustomerKycIdData] = useState("");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [clientData, setClientData] = useState(null);
   const [isLoading, setisLoading] = useState(false);
+  const [userDataFooters, setUserDataFooters] = useState([]);
 
   useEffect(() => {
     setup();
@@ -75,47 +77,63 @@ const Bank = () => {
 
   const handleSendRequest = (e) => {
     e.preventDefault();
-    setisLoading(true)
+    setisLoading(true);
     if (dmr && accounts) {
       dmr.methods
         .addRequest(customerKycId)
         .send({ from: accounts[0] })
         .then((res) => {
-          setisLoading(false)
-          message.success("Request sent!")
+          setisLoading(false);
+          message.success("Request sent!");
           getBankData();
           setCustomerKycId("");
         })
         .catch((err) => {
-          setisLoading(false)
-          message.error("Something went wrong!")
+          setisLoading(false);
+          message.error("Something went wrong!");
           console.log(err);
         });
     }
   };
 
-  // const handleCancelRequest = (kycId) => {
-  //   if (dmr && accounts) {
-  //     dmr.methods
-  //       .removeRequest(kycId)
-  //       .send({ from: accounts[0] })
-  //       .then((res) => {
-  //         console.log("Removed succesfully!");
-  //         getBankData();
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-  //   }
-  // };
+  const handleRequestData = (e) => {
+    e.preventDefault();
+    setisLoading(true);
+    console.log(customerKycIdData);
+    if (dmr && accounts) {
+      dmr.methods
+        .getCustomerDetails(customerKycIdData)
+        .call({ from: accounts[0] })
+        .then((res) => {
+          setisLoading(false);
+          message.success("Request sent!");
+          console.log(res);
+          togglePopup(res, [
+            <Button type="primary" onClick={() => handleKycVerdict(1)}>
+              Accept KYC
+            </Button>,
+            <Button type="primary" onClick={() => handleKycVerdict(3)}>
+              Revoke KYC
+            </Button>,
+          ]);
+          setCustomerKycIdData("");
+        })
+        .catch((err) => {
+          setisLoading(false);
+          message.error("Something went wrong!");
+          console.log(err);
+        });
+    }
+  };
 
   const handelLogout = () => {
     localStorage.removeItem("bankToken");
     history.push("/");
   };
 
-  const togglePopup = (data) => {
+  const togglePopup = (data, footers) => {
     setClientData(data);
+    setUserDataFooters(footers);
     setIsPopupOpen((prev) => {
       return !prev;
     });
@@ -143,31 +161,25 @@ const Bank = () => {
         });
     }
   };
-  const handelApproveWithoutvKYC = (verdict) => {
+
+  const handleKycVerdict = (verdict) => {
     if (dmr && accounts && clientData) {
-      if (verdict) {
-        dmr.methods
-          .approveKyc(clientData.kycId, bankDetails.bName, "OK", Date.now())
-          .send({ from: accounts[0] })
-          .then((res) => {
-            getBankData();
-            togglePopup();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      } else {
-        dmr.methods
-          .rejectKyc(clientData.kycId, bankDetails.bName, "REJECT", Date.now())
-          .send({ from: accounts[0] })
-          .then((res) => {
-            getBankData();
-            togglePopup();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
+      dmr.methods
+        .updateKycStatus(
+          clientData.kycId,
+          bankDetails.bName,
+          "REJECT",
+          Date.now(),
+          verdict
+        )
+        .send({ from: accounts[0] })
+        .then((res) => {
+          getBankData();
+          togglePopup();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 
@@ -183,30 +195,7 @@ const Bank = () => {
             return !prev;
           })
         }
-        footer={[
-          <Button type="primary" onClick={handelStartvKYC}>
-            Start vKYC
-          </Button>,
-          <Button type="primary" onClick={() => handelApproveWithoutvKYC(true)}>
-            Approve without vKYC
-          </Button>,
-          <Button
-            type="primary"
-            onClick={() => handelApproveWithoutvKYC(false)}
-          >
-            Reject without vKYC
-          </Button>,
-          <Button
-            key="back"
-            onClick={() =>
-              setIsPopupOpen((prev) => {
-                return !prev;
-              })
-            }
-          >
-            Cancel
-          </Button>,
-        ]}
+        footer={userDataFooters}
       >
         <VerifyClient dmr={dmr} accounts={accounts} data={clientData} />
       </Modal>
@@ -226,17 +215,16 @@ const Bank = () => {
           }}
         >
           <div style={{ margin: "auto 0" }}>
-            <h1 style={{ color: "rgb(14 21 246 / 85%)" ,fontWeight:"700"}}>vKYC</h1>
+            <h1 style={{ color: "rgb(14 21 246 / 85%)", fontWeight: "700" }}>vKYC</h1>
           </div>
           <div style={{ margin: "auto 0" }}>
-            <Button
-              type="primary"
-              ghost
-            >
+            <Button type="primary" ghost>
               Hello Bank!
             </Button>
             <Button></Button>
-            <Button danger ghost onClick={handelLogout}>Logout</Button>
+            <Button danger ghost onClick={handelLogout}>
+              Logout
+            </Button>
           </div>
         </div>
 
@@ -267,11 +255,23 @@ const Bank = () => {
           </div>
         </Card>
 
-        <Card
-          title="Pending Requests"
-          style={{ marginBottom: "20px" }}
-          hoverable
-        >
+        <Card title="Access Data" style={{ margin: "20px 0" }} hoverable>
+          <div style={{ display: "flex" }}>
+            <Input
+              size="large"
+              placeholder="Client KYC ID"
+              value={customerKycIdData}
+              onChange={(e) => setCustomerKycIdData(e.target.value)}
+              style={{ width: "20%" }}
+              prefix={<UserOutlined />}
+            />
+            <Button size="large" loading={isLoading} onClick={handleRequestData}>
+              Access
+            </Button>
+          </div>
+        </Card>
+
+        <Card title="Pending Requests" style={{ marginBottom: "20px" }} hoverable>
           {pendingClientRequests.length > 0
             ? pendingClientRequests.map((req, i) => {
                 return (
@@ -291,11 +291,7 @@ const Bank = () => {
             : "No pending requests"}
         </Card>
 
-        <Card
-          title="Approved Requests"
-          style={{ marginBottom: "20px" }}
-          hoverable
-        >
+        <Card title="Approved Requests" style={{ marginBottom: "20px" }} hoverable>
           {approvedClients.length > 0
             ? approvedClients.map((req, i) => {
                 return (
@@ -307,7 +303,35 @@ const Bank = () => {
                       fontSize: "15px",
                       borderRadius: "9px",
                     }}
-                    onClick={() => togglePopup(req)}
+                    onClick={() =>
+                      togglePopup(req, [
+                        <Button type="primary" onClick={handelStartvKYC}>
+                          Start vKYC
+                        </Button>,
+                        <Button
+                          type="primary"
+                          onClick={() => handleKycVerdict(1)} //Accept
+                        >
+                          Approve without vKYC
+                        </Button>,
+                        <Button
+                          type="primary"
+                          onClick={() => handleKycVerdict(2)} //Reject
+                        >
+                          Reject without vKYC
+                        </Button>,
+                        <Button
+                          key="back"
+                          onClick={() =>
+                            setIsPopupOpen((prev) => {
+                              return !prev;
+                            })
+                          }
+                        >
+                          Cancel
+                        </Button>,
+                      ])
+                    }
                   >
                     {req.name}
                   </Card.Grid>
