@@ -100,7 +100,7 @@ const Client = () => {
           style={{
             display: "flex",
             justifyContent: "space-around",
-            margin: "25px",
+            margin: "20px",
           }}
         >
           <div style={{ margin: "auto 0" }}>
@@ -119,13 +119,13 @@ const Client = () => {
           </div>
         </div>
 
-        <Card title="Client Data" my={"50px"} hoverable>
+        <Card title="Client Data"  hoverable>
           {userData ? <ClientData userData={userData} /> : "No Data Found"}
         </Card>
 
         <Card
           title="Your approved Banks"
-          style={{ margin: "10px 0" }}
+          style={{ margin: "20px 0" }}
           hoverable
         >
           {bankList && bankList.approvedBanks.length > 0
@@ -137,6 +137,7 @@ const Client = () => {
                       textAlign: "center",
                       margin: "15px",
                       fontSize: "15px",
+                      borderRadius:"9px"
                     }}
                   >
                     {item[0]}
@@ -148,7 +149,7 @@ const Client = () => {
 
         <Card
           title="Pending KYC Requests:"
-          style={{ margin: "10px 0" }}
+          style={{ marginBottom: "20px" }}
           hoverable
         >
           {bankList && bankList.pendingBanks.length > 0
@@ -160,6 +161,7 @@ const Client = () => {
                       textAlign: "center",
                       margin: "15px",
                       fontSize: "15px",
+                      borderRadius:"9px"
                     }}
                   >
                     {data[0]}

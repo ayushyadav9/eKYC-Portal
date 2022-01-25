@@ -204,7 +204,7 @@ const Bank = () => {
             Etherium Address: {bankDetails.bWallet}
         </Card>}
         </Card>
-        <Card title="Request Access" style={{margin: '10px 0'}} hoverable>
+        <Card title="Request Access" style={{margin: '20px 0'}} hoverable>
           <div style={{display:"flex"}}>
         <Input 
           size="large" 
@@ -216,20 +216,20 @@ const Bank = () => {
         </div>
         </Card>
 
-        <Card title="Pending Requests" style={{margin: '10px 0'}} hoverable>
+        <Card title="Pending Requests" style={{marginBottom: '20px'}} hoverable>
         {pendingClientRequests.length>0? pendingClientRequests.map((req, i) => {
               return (
-                <Card.Grid style={{width:'25%',textAlign:'center', margin:"15px",fontSize:"15px"}} onClick={() => kycVerdictHandler(req.kycId)}>
+                <Card.Grid style={{width:'25%',textAlign:'center', margin:"15px",fontSize:"15px",borderRadius:"9px"}} onClick={() => kycVerdictHandler(req.kycId)}>
                   {req.name}
                 </Card.Grid>
               );
             }):"No pending requests"}
         </Card>
 
-        <Card title="Approved Requests" style={{margin: '10px 0'}} hoverable>
+        <Card title="Approved Requests" style={{marginBottom: '20px'}} hoverable>
         {approvedClients.length>0 ? approvedClients.map((req, i) => {
                 return (
-                  <Card.Grid style={{width:'25%',textAlign:'center', margin:"15px",fontSize:"15px"}} onClick={() => togglePopup(req)}>
+                  <Card.Grid style={{width:'25%',textAlign:'center', margin:"15px",fontSize:"15px",borderRadius:"9px"}} onClick={() => togglePopup(req)}>
                     {req.name}
                   </Card.Grid>
                 );
