@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import ClientData from "./ClientData";
 import { baseURL } from "../../api";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { Card,Button,Input,Row } from "antd";
-
+import { Card, Button, Row, message } from "antd";
 
 const Client = () => {
   const history = useHistory();
@@ -29,11 +26,11 @@ const Client = () => {
       .then((result, err) => {
         if (err) {
           console.log(err);
-          toast.error("Something went wrong");
+          message.error("Something went wrong");
           return;
         }
         if (result.success) {
-          toast.success(result.message);
+          message.success(result.message);
           setUserData(result.data);
         }
         console.log(result);
@@ -52,7 +49,7 @@ const Client = () => {
       .then((result, err) => {
         if (err) {
           console.log(err);
-          toast.error("Something went wrong");
+          message.error("Something went wrong");
           return;
         }
         if (result.success) {
@@ -79,7 +76,7 @@ const Client = () => {
       .then((result, err) => {
         if (err) {
           console.log(err);
-          toast.error("Something went wrong");
+          message.error("Something went wrong");
           return;
         }
         if (result.success) {
@@ -91,13 +88,30 @@ const Client = () => {
 
   return (
     <>
-      <div style={{ display: "flex", flexDirection: "column", margin: "0 auto", width: "80%" }}>
-        <div style={{ display: "flex", justifyContent: "space-around", margin: "25px" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          margin: "0 auto",
+          width: "80%",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            margin: "25px",
+          }}
+        >
           <div style={{ margin: "auto 0" }}>
             <h1 style={{ color: "rgb(14 21 246 / 85%)" }}>vKYC</h1>
           </div>
           <div style={{ margin: "auto 0" }}>
-            <Button type="primary" ghost  onClick={() => history.push("/client/UpdateRecord")}>
+            <Button
+              type="primary"
+              ghost
+              onClick={() => history.push("/client/UpdateRecord")}
+            >
               Update Details
             </Button>
             <Button></Button>
@@ -109,41 +123,64 @@ const Client = () => {
           {userData ? <ClientData userData={userData} /> : "No Data Found"}
         </Card>
 
-        <Card title="Your approved Banks"
-          style={{ margin: '10px 0' }} hoverable>
-
-          {bankList && bankList.approvedBanks.length > 0 ?
-            bankList.approvedBanks.map((item, i) => {
-              return (
-                <Card.Grid style={{ width: '25%', textAlign: 'center', margin: "15px", fontSize: "15px" }}>
-                  {item[0]}
-                </Card.Grid>
-              );
-            }): "You have no approved Banks"}
+        <Card
+          title="Your approved Banks"
+          style={{ margin: "10px 0" }}
+          hoverable
+        >
+          {bankList && bankList.approvedBanks.length > 0
+            ? bankList.approvedBanks.map((item, i) => {
+                return (
+                  <Card.Grid
+                    style={{
+                      width: "25%",
+                      textAlign: "center",
+                      margin: "15px",
+                      fontSize: "15px",
+                    }}
+                  >
+                    {item[0]}
+                  </Card.Grid>
+                );
+              })
+            : "You have no approved Banks"}
         </Card>
 
-        <Card title="Pending KYC Requests:" 
-          style={{ margin: '10px 0' }} hoverable>
-
-          {bankList && bankList.pendingBanks.length > 0 ?
-            bankList.pendingBanks.map((data, i) => {
-              return (
-                <Card.Grid style={{ width: '25%', textAlign: 'center', margin: "15px", fontSize: "15px" }}>
-                {data[0]}
-                <Row>
-                  <Button mx={2} onClick={(e) => handleRequest(e, data[1], true)}>
-                    <p>Give Access</p>
-                  </Button>
-                  <Button
-                    mx={2}
-                    onClick={(e) => handleRequest(e, data[1], false)}
+        <Card
+          title="Pending KYC Requests:"
+          style={{ margin: "10px 0" }}
+          hoverable
+        >
+          {bankList && bankList.pendingBanks.length > 0
+            ? bankList.pendingBanks.map((data, i) => {
+                return (
+                  <Card.Grid
+                    style={{
+                      width: "25%",
+                      textAlign: "center",
+                      margin: "15px",
+                      fontSize: "15px",
+                    }}
                   >
-                    <p>Decline</p>
-                  </Button>
-                </Row>
-                </Card.Grid>
-              );
-            }): "You have no pending KYC request"}
+                    {data[0]}
+                    <Row>
+                      <Button
+                        mx={2}
+                        onClick={(e) => handleRequest(e, data[1], true)}
+                      >
+                        <p>Give Access</p>
+                      </Button>
+                      <Button
+                        mx={2}
+                        onClick={(e) => handleRequest(e, data[1], false)}
+                      >
+                        <p>Decline</p>
+                      </Button>
+                    </Row>
+                  </Card.Grid>
+                );
+              })
+            : "You have no pending KYC request"}
         </Card>
 
         <Card mt={20}></Card>

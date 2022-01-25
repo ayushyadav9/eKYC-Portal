@@ -15,25 +15,23 @@ import VideoPageAgent from "./components/VideoCall/VideoPageAgent";
 import "antd/dist/antd.css";
 import "font-awesome/css/font-awesome.min.css";
 
-
-
 function App() {
   return (
-      <Router>
-        <Switch>
-          <Route exact path="/" component={Home} />
-          <ProtectedRoute exact path="/client" component={Client} />
-          <ProtectedRoute exact path="/bank" component={Bank} />
-          <ProtectedRoute exact path="/bank/update" component={UpdateData} />
-          <Route exact path="/admin" component={AdminPortal} />
-          <Route exact path="/admin/AddBank" component={AddBank} />
-          <Route exact path="/admin/AddAuth" component={AddAuth} />
-          <Route exact path="/client/UpdateRecord" component={UpdateRecord} />
-          <Route exact path="/client/NewClient" component={NewClient} />
-          <Route exact path="/client/video" component={VideoPageClient} />
-          <Route exact path="/agent/video/:clientId" component={VideoPageAgent} />
-        </Switch>
-      </Router>
+    <Router>
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <ProtectedRoute exact path="/client" component={Client} />
+        <ProtectedRoute exact path="/bank" component={Bank} />
+        <ProtectedRoute exact path="/bank/update" component={UpdateData} />
+        <Route exact path="/admin" component={AdminPortal} />
+        <Route exact path="/admin/AddBank" component={AddBank} />
+        <Route exact path="/admin/AddAuth" component={AddAuth} />
+        <Route exact path="/client/UpdateRecord" component={UpdateRecord} />
+        <Route exact path="/client/NewClient" component={NewClient} />
+        <Route exact path="/client/video" component={VideoPageClient} />
+        <Route exact path="/agent/video/:clientId" component={VideoPageAgent} />
+      </Switch>
+    </Router>
   );
 }
 

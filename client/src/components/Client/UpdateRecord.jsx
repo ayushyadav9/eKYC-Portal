@@ -1,15 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import InitialiseWeb3 from "../utils/web3.js";
 import { baseURL } from "../../api";
-import { ToastContainer, toast } from "react-toastify";
-import { Form, Button } from "antd";
-import { Upload } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-import { DownOutlined } from "@ant-design/icons";
-import { Card, Col, Row } from "antd";
-import { Select, Space } from "antd";
-
+import { Select, Space, Card, Row, Button, message  } from "antd";
 const IPFS = require("ipfs-api");
 const ipfs = new IPFS({
   host: "ipfs.infura.io",
@@ -19,22 +11,22 @@ const ipfs = new IPFS({
 
 const UpdateRecord = () => {
   const history = useHistory();
-  //const [isLoading, setisLoading] = useState(false);
-  const [message, setMessage] = useState(null);
   const [buffer, setbuffer] = useState([]);
   const [docType, setDocType] = useState("");
+  const [isLoading, setisLoading] = useState(false);
   const { Option } = Select;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("OPGG");
+    setisLoading(true)
     ipfs.files.add(buffer, (error, result) => {
+      setisLoading(false)
       if (error) {
         console.error(error);
-        setMessage("Something went wrong!");
+        message.error("Something went wrong!");
         return;
       }
-      setMessage("Updated Successfuly!");
+      message.success("Updated Successfuly!");
       console.log(result);
       updateRecord(docType, result[0].hash);
     });
@@ -61,7 +53,7 @@ const UpdateRecord = () => {
       .then((result, err) => {
         if (err) {
           console.log(err);
-          toast.error("Something went wrong");
+          message.error("Something went wrong");
           return;
         }
       });
@@ -82,7 +74,7 @@ const UpdateRecord = () => {
 
   return (
     <>
-      <div style={{ paddingTop: "240px" }}>
+      <div style={{ marginTop: "100px" }}>
         <div
           style={{
             background: "#ECECEC",
@@ -123,7 +115,7 @@ const UpdateRecord = () => {
                   <Option value="pan">Pan</Option>
                 </Select>
                 <input onChange={captureFile} type="file" />{" "}
-                <Button type="primary" size={"large"} onClick={handleSubmit}>
+                <Button type="primary" size={"large"} loading={isLoading} onClick={handleSubmit}>
                   Submit
                 </Button>
               </Space>
