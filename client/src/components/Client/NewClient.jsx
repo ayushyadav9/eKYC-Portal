@@ -33,7 +33,7 @@ const NewClient = () => {
     });
   }, []);
 
-  const handelSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setisLoading(true);
     ipfs.files.add(buffer, (error, result) => {
@@ -93,7 +93,7 @@ const NewClient = () => {
         flexDirection: "column",
         margin: "0 auto",
         width: "80%",
-        justifyContent:"center"
+        justifyContent: "center",
       }}
     >
       <div
@@ -130,9 +130,7 @@ const NewClient = () => {
           <Input
             type="email"
             value={formData.email}
-            onChange={(e) =>
-              setformData({ ...formData, email: e.target.value })
-            }
+            onChange={(e) => setformData({ ...formData, email: e.target.value })}
             required
           />
         </Form.Item>
@@ -140,9 +138,7 @@ const NewClient = () => {
           <Input
             type="text"
             value={formData.address}
-            onChange={(e) =>
-              setformData({ ...formData, address: e.target.value })
-            }
+            onChange={(e) => setformData({ ...formData, address: e.target.value })}
             required
           />
         </Form.Item>
@@ -150,16 +146,16 @@ const NewClient = () => {
           <Input
             type="text"
             value={formData.phone}
-            onChange={(e) =>
-              setformData({ ...formData, phone: e.target.value })
-            }
+            onChange={(e) => setformData({ ...formData, phone: e.target.value })}
             required
           />
         </Form.Item>
         <Form.Item label="DOB">
           <DatePicker
             value={formData.dob}
-            onChange={(e) => setformData({ ...formData, dob: e.target.value })}
+            onChange={(date, dateString) => {
+              setformData({ ...formData, dob: dateString });
+            }}
           />
         </Form.Item>
         <Form.Item label="Gender">
@@ -173,38 +169,23 @@ const NewClient = () => {
           <Input
             type="text"
             value={formData.PANno}
-            onChange={(e) =>
-              setformData({ ...formData, PANno: e.target.value })
-            }
+            onChange={(e) => setformData({ ...formData, PANno: e.target.value })}
             required
           />
         </Form.Item>
-    
 
-      <Form.Item label="PAN Card">
-        <Input
-          type="file"
-          required
-          width={1}
-          onChange={(e) => captureFile(e, 0)}
-        />
-      </Form.Item>
-      <Form.Item label="Aadhar Card">
-        <Input
-          type="file"
-          required
-          width={1}
-          onChange={(e) => captureFile(e, 1)}
-        />
-      </Form.Item>
-      <Form.Item label="Selfie">
-        <Input
-          type="file"
-          required
-          width={1}
-          onChange={(e) => captureFile(e, 2)}
-        />
-      </Form.Item>
+        <Form.Item label="PAN Card">
+          <Input type="file" required width={1} onChange={(e) => captureFile(e, 0)} />
+        </Form.Item>
+        <Form.Item label="Aadhar Card">
+          <Input type="file" required width={1} onChange={(e) => captureFile(e, 1)} />
+        </Form.Item>
+        <Form.Item label="Selfie">
+          <Input type="file" required width={1} onChange={(e) => captureFile(e, 2)} />
+        </Form.Item>
+        <Button type="submit" onClick={handleSubmit}>
+          Register
+        </Button>
       </Form>
     </div>
   );
