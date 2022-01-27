@@ -21,7 +21,6 @@ const ClientData = ({ userData }) => {
   const { Text} = Typography;
 
   useEffect(() => {
-    console.log(userData)
     if(userData){
     let da = []
     setkysStat(findStatus(userData.kycStatus))
@@ -37,6 +36,7 @@ const ClientData = ({ userData }) => {
     });
     settableData(da)
     }
+     // eslint-disable-next-line 
   }, []);
   
 

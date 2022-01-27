@@ -137,6 +137,7 @@ const NewClient = () => {
       buf[2] = Buffer(reader.result);
       setbuffer(buf);
     };
+     // eslint-disable-next-line 
   }, [webcamRef]);
 
   const handleCancel = () => {

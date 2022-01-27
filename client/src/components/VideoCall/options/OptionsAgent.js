@@ -4,7 +4,7 @@ import React, {
   useEffect,
   useRef
 } from "react";
-import { Input, Button, Tooltip, Modal, message } from "antd";
+import { Input, Button, Modal } from "antd";
 import Phone from "../../../assets/phone.gif";
 import Teams from "../../../assets/teams.mp3";
 import * as classes from "./Options.module.css";
@@ -57,6 +57,7 @@ const Options = (props) => {
       setIsModalVisible(true);
       setOtherUser(call.from);
     } else setIsModalVisible(false);
+    // eslint-disable-next-line 
   }, [call.isReceivingCall]);
 
   return (

@@ -1,13 +1,8 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import VideoContext from "../../../context/VideoContext";
 import "./Video.css";
-import { Card, Modal, Button, Input, notification, Avatar } from "antd";
-import Man from "../../../assets/man.svg";
-import VideoIcon from "../../../assets/video.svg";
+import {  Modal, Input, notification, Avatar } from "antd";
 import ScreenShotIcon from "../../../assets/screenshot.png";
-import { io } from "socket.io-client";
-import VideoOff from "../../../assets/video-off.svg";
-// import Profile from "../../assets/profile.svg";
 import Msg_Illus from "../../../assets/msg_illus.svg";
 import Msg from "../../../assets/msg.svg";
 import { UserOutlined, MessageOutlined, RedoOutlined } from "@ant-design/icons";
@@ -18,30 +13,16 @@ import { socket } from "../../../context/VideoState";
 const { Search } = Input;
 const Video = (props) => {
   const {
-    call,
     callAccepted,
-    myVideo,
     userVideo,
-    stream,
     name,
-    setName,
     callEnded,
-    me,
-    callUser,
-    leaveCall,
-    answerCall,
     sendMsg: sendMsgFunc,
     msgRcv,
     chat,
     setChat,
-    userName,
-    myVdoStatus,
     fullScreen,
     userVdoStatus,
-    updateVideo,
-    myMicStatus,
-    userMicStatus,
-    updateMic,
   } = useContext(VideoContext);
 
   const [sendMsg, setSendMsg] = useState("");
@@ -78,6 +59,7 @@ const Video = (props) => {
         icon: <MessageOutlined style={{ color: "#108ee9" }} />,
       });
     }
+    // eslint-disable-next-line
   }, [msgRcv]);
 
   return (

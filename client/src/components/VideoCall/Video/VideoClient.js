@@ -90,6 +90,7 @@ const Video = () => {
         icon: <MessageOutlined style={{ color: "#108ee9" }} />,
       });
     }
+     // eslint-disable-next-line
   }, [msgRcv]);
 
   return (

@@ -134,6 +134,7 @@ const Bank = () => {
   };
 
   const togglePopup = (data, footers) => {
+
     setClientData(data);
     console.log(data);
     setUserDataFooters(footers);
@@ -142,14 +143,14 @@ const Bank = () => {
     });
   };
 
-  const handelStartvKYC = () => {
-    if (clientData) {
+  const handelStartvKYC = (kyc) => {
+    
       fetch(`${baseURL}/getSocket`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ kycId: clientData.kycId }),
+        body: JSON.stringify({ kycId: kyc }),
       })
         .then((res) => res.json())
         .then((result, err) => {
@@ -162,7 +163,6 @@ const Bank = () => {
           }
           console.log(result);
         });
-    }
   };
 
   const handleKycVerdict = (verdict) => {
@@ -184,7 +184,7 @@ const Bank = () => {
         .then((res) => {
           getBankData();
           handelAddRemarksPopup();
-          togglePopup()
+          setIsPopupOpen((prev) => {return !prev;});
         })
         .catch((err) => {
           console.log(err);
@@ -363,7 +363,7 @@ const Bank = () => {
                     }}
                     onClick={() =>
                       togglePopup(req, [
-                        <Button type="primary" onClick={handelStartvKYC}>
+                        <Button type="primary" onClick={()=>handelStartvKYC(req.kycId)}>
                           Start vKYC
                         </Button>,
                         <Button

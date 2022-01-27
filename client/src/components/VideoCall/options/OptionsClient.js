@@ -11,7 +11,7 @@ import {
   CopyOutlined,
   PhoneOutlined,
 } from "@ant-design/icons";
-import { baseURL } from "../../../api";
+// import { baseURL } from "../../../api";
 
 const Options = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -49,6 +49,7 @@ const Options = () => {
       setIsModalVisible(true);
       setOtherUser(call.from);
     } else setIsModalVisible(false);
+    // eslint-disable-next-line
   }, [call.isReceivingCall]);
 
   return (

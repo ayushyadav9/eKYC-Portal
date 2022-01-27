@@ -28,7 +28,8 @@ const VerifyClient = ({data,dmr,accounts}) => {
         .catch((err) => {
           console.log(err);
         });
-    }            
+    }    
+     // eslint-disable-next-line         
   }, []);
 
   

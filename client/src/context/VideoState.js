@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import VideoContext from "./VideoContext";
 import { io } from "socket.io-client";
 import Peer from "simple-peer";
-import { message } from "antd";
 
 const URL = "http://localhost:5000/";
 
@@ -27,7 +26,7 @@ const VideoState = ({ children }) => {
   const myVideo = useRef();
   const userVideo = useRef();
   const connectionRef = useRef();
-  const screenTrackRef = useRef();
+  // const screenTrackRef = useRef();
 
   useEffect(() => {
     navigator.mediaDevices

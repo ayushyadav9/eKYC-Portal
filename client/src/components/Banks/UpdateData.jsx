@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Flex, Box, Card, Heading, Form, Field, Button, Loader, Text } from "rimble-ui";
 import InitialiseWeb3 from "../utils/web3.js";
-import { baseURL } from "../../api";
-import { ToastContainer, toast } from "react-toastify";
 const IPFS = require("ipfs-api");
 const ipfs = new IPFS({ host: "ipfs.infura.io", port: 5001, protocol: "https" });
 
@@ -72,49 +70,6 @@ const UpdateData = () => {
           console.log(err);
       });
     }
-
-    // if (dmr && accounts) {
-    //   fetch(`${baseURL}/register`, {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       email: formData.email,
-    //       sender: "client",
-    //     }),
-    //   })
-    //     .then((res) => res.json())
-    //     .then((result, err) => {
-    //       setisLoading(false);
-    //       if (err) {
-    //         console.log(err);
-    //         toast.error("Something went wrong");
-    //         return;
-    //       }
-    //       if (result.success) {
-    //         dmr.methods
-    //           .addCustomer(
-    //             formData.name,
-    //             formData.phone,
-    //             formData.address,
-    //             formData.gender,
-    //             formData.dob,
-    //             formData.PANno,
-    //             result.data.user.kycId,
-    //             panIPFS,
-    //             aadharIPFS
-    //           )
-    //           .send({ from: accounts[0] })
-    //           .then((res) => {
-    //             console.log(res);
-    //           })
-    //           .catch((err) => {
-    //             console.log(err);
-    //           });
-    //       }
-    //     });
-    // }
   };
 
   const captureFile = (e) => {
@@ -128,18 +83,6 @@ const UpdateData = () => {
 
   return (
     <>
-    <ToastContainer
-      theme="dark" 
-      position="top-right"
-      autoClose={5000}
-      hideProgressBar={false}
-      newestOnTop={false}
-      closeOnClick
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-      />
     <Flex height={"100vh"}>
       <Box mx={"auto"} my={"auto"} width={[1, 9 / 15, 7 / 15]}>
         <Flex px={2} mx={"auto"} justifyContent="space-between">

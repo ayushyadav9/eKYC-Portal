@@ -19,6 +19,7 @@ const VideoPage = (props) => {
 
   useEffect(() => {
     if (!navigator.onLine) toast.error("Please connect to the internet!");
+     // eslint-disable-next-line
   }, [navigator]);
 
   useEffect(() => {
