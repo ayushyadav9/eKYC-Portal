@@ -48,12 +48,14 @@ Moreover, in decentralized  vKYC platform  the vKYC is done once and is stored i
 <!-- USAGE EXAMPLES -->
 ## **Screenshots**
 <div align="center" ><br/>
-Start with creating an account on i-Notebook<br/><hr width=600/>
-  <img src="./images/1.png" width=600 ><br/><br/>
-After Account creation user can add create notes<br/><hr width=600/>
+Client Pannel<br/><hr width=600/>
+  <img src="./images/4.png" width=600 ><br/><br/>
+Video KYC by Bank Client<br/><hr width=600/>
   <img src="./images/2.png" width=600 ><br/><br/>
-Updating a note<br/><hr width=600/>
+Accessing KYC history<br/><hr width=600/>
   <img src="./images/3.png" width=600><br/>
+Adding remark and Acceping/Rejection of KYC request<br/><hr width=600/>
+  <img src="./images/1.png" width=600><br/>
 </div>
 <br/>
 
