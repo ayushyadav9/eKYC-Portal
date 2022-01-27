@@ -18,7 +18,7 @@
 </div>
 <br/>
 
-**Demo** : [Click here](https://i-notes.netlify.app/)
+**Demo** : [Click here](https://youtu.be/rUyT8FlGMnQ)
 
 
 
