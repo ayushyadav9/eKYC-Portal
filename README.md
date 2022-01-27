@@ -100,9 +100,3 @@ Visit this URL in your browser: http://localhost:3000
 `$ npm run server`
 Visit this URL in your browser: http://localhost:5000
 
-<!-- CONTACT -->
-### **Contact**
-Ayush Yadav - ayushyadav935@gmail.com
-
-<br/>
-
