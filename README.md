@@ -18,8 +18,8 @@
 </div>
 <br/>
 
-**Demo** : [Click here](https://youtu.be/rUyT8FlGMnQ)
-
+**Demo Website** : [https://vkyc.netlify.app/](https://vkyc.netlify.app/)<br/>
+**Demo Video** : [https://youtu.be/rUyT8FlGMnQ](https://youtu.be/rUyT8FlGMnQ)
 
 
 <!-- ABOUT THE PROJECT -->
@@ -28,6 +28,23 @@
 Covid-19 Pandemic has triggered a new innovation in the field of KYC called Video KYC (Know Your Customer) - vKYC. Typically a vKYC is done via a weblink which asks the applicant to upload a few digital documents link PAN Card, Aadhaar along with selfie pictures and location of the applicant through GPS & IP address. This is followed by an employee of the financial institution calling the application over a video call to verify the data and documents. However, this process is done by each institution in silos for which the applicant ends up doing vKYC for each institution separately.
 
 Imagine a group of N banks coming together and forming a consortium who agrees to have the same vKYC for all the member banks. They want to develop a blockchain based vKYC platform where the vKYC is done once and is stored in a blockchain and the member banks share this data for their KYC needs. Apply your innovations and develop a blockchain based vKYC platform.
+<br>
+<br>
+
+<!-- Key Features -->
+## **Key Features**
+<br>
+<ul>
+  <li>Client and Bank Registration</li>
+  <li>Crypto Wallet-less UI for Clients</li>
+  <li>Additional Layer of Authorisation Protecting Client Data</li>
+  <li>Admin Panel</li>
+  <li>Decentralized IPFS for Documents</li>
+  <li>Detailed User Dashboard</li>
+  <li>Entire Customer KYC History Visualisation</li>
+  <li>Geo-tagging</li>
+  <li>In-built Video KYC Platform</li>
+</ul>  
 <br>
 <br>
 
