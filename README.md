@@ -19,8 +19,10 @@
 <br/>
 
 **Demo Website** : [https://vkyc.netlify.app/](https://vkyc.netlify.app/)<br/>
-**Demo Video** : [https://youtu.be/rUyT8FlGMnQ](https://youtu.be/rUyT8FlGMnQ)
+**Demo Video** : [https://youtu.be/rUyT8FlGMnQ](https://youtu.be/rUyT8FlGMnQ)<br/>
 
+**Updated Frontend Repo** : [https://github.com/ayushyadav9/eKYC-Frontend](https://github.com/ayushyadav9/eKYC-Frontend)<br/>
+**Updated Backend Repo** : [https://github.com/ayushyadav9/eKYC-Backend](https://github.com/ayushyadav9/eKYC-Backend)<br/>
 
 <!-- ABOUT THE PROJECT -->
 
